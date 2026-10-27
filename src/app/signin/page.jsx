@@ -3,25 +3,38 @@
 import { useState } from "react";
 import { Button, Input } from "@heroui/react";
 import { FcGoogle } from "react-icons/fc";
-import { signIn } from "@/lib/auth-client";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
+import { createAuthClient } from "better-auth/client";
 
 const SigninForm = () => {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+
+  const authClient = createAuthClient();
+  const signIn = async () => {
+    const {data, error} = await authClient.signIn.social({
+      provider: "google",
+    });
+    if(data){
+      toast.success(`login successfully done`)
+    }else{
+     toast.error(error.message || "Something went wrong!")
+    }
+  };
+
 
   const handleSignin = async (e) => {
     e.preventDefault();
     setLoading(true);
 
     const formData = new FormData(e.currentTarget);
-    const data = Object.fromEntries(formData.entries());
+    const Data = Object.fromEntries(formData.entries());
 
     try {
       const signin = await signIn.email({
-        email: data.email,
-        password: data.password,
+        email: Data.email,
+        password: Data.password,
       });
 
       if (signin.error) {
@@ -35,21 +48,6 @@ const SigninForm = () => {
       toast.error(error.message || "Something went wrong!");
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleGoogleSignin = async () => {
-    try {
-      const result = await signIn.social({
-        provider: "google",
-        callbackURL: "/",
-      });
-
-      if (result?.error) {
-        toast.error(result.error.message || "Google login failed!");
-      }
-    } catch (error) {
-      toast.error(error.message || "Google login failed!");
     }
   };
 
@@ -129,7 +127,7 @@ const SigninForm = () => {
         <Button
           type="button"
           variant="bordered"
-          onPress={handleGoogleSignin}
+          onClick={signIn}
           className="w-full border border-white/15 bg-[#27272a] py-3 font-medium text-white transition hover:bg-[#3f3f46]"
         >
           <FcGoogle size={20} />

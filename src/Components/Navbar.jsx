@@ -4,7 +4,7 @@ import { authClient } from "@/lib/auth-client";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-
+import { toast } from "react-toastify";
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -13,8 +13,18 @@ const Navbar = () => {
   const user = session?.user;
 
   const handleLogout = async () => {
-    await authClient.signOut();
-    setMenuOpen(false);
+    try {
+      const { error } = await authClient.signOut();
+
+      if (error) {
+        toast.error(error.message || "Logout failed!");
+        return;
+      }
+      toast.success("Logout successfully done!");
+      setMenuOpen(false);
+    } catch (error) {
+      toast.error(error.message || "Something went wrong!");
+    }
   };
 
   const navLinks = [
@@ -63,12 +73,12 @@ const Navbar = () => {
                 />
               ) : (
                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#5c53fe] font-semibold text-white">
-                  {user.name?.charAt(0)?.toUpperCase() || "U"}
+                 {user.name?.charAt(0)?.toUpperCase() || "U"}
                 </div>
               )}
 
               <span className="max-w-32 truncate text-sm font-medium text-white">
-                {user.name}
+               Hi !, {user.name}
               </span>
 
               <button
