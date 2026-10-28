@@ -11,6 +11,7 @@ const Navbar = () => {
   const { data: session, isPending } = authClient.useSession();
 
   const user = session?.user;
+  console.log(user);
 
   const handleLogout = async () => {
     try {
@@ -32,6 +33,12 @@ const Navbar = () => {
     { href: "/pricing", label: "Pricing" },
     { href: "/company", label: "Company" },
   ];
+  if (!isPending && user) {
+    navLinks.push({
+      href: user.role === "recruiter" ? "/dashbord" : "/seekerdashbord",
+      label: "Dashboard",
+    });
+  }
 
   return (
     <header className="sticky top-0 z-50 px-4 pt-4 sm:px-6">
@@ -73,12 +80,12 @@ const Navbar = () => {
                 />
               ) : (
                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#5c53fe] font-semibold text-white">
-                 {user.name?.charAt(0)?.toUpperCase() || "U"}
+                  {user.name?.charAt(0)?.toUpperCase() || "U"}
                 </div>
               )}
 
               <span className="max-w-32 truncate text-sm font-medium text-white">
-               Hi !, {user.name}
+                Hi !, {user.name}
               </span>
 
               <button
