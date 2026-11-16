@@ -1,9 +1,10 @@
+import JobPostForm from '@/Components/dashbordComp/JobPostForm';
 import React from 'react';
 
 const page = () => {
     return (
         <div>
-            this is jobs page
+            <JobPostForm />
         </div>
     );
 };

@@ -1,4 +1,6 @@
-
+export const instant = false;
+import { auth } from "@/lib/auth";
+import { activeJobs, closedJobs, getRoleByUserID } from "@/lib/mechine";
 import {
   FileText,
   Users,
@@ -7,87 +9,8 @@ import {
   Building2,
   ArrowUpRight,
 } from "lucide-react";
-
-const stats = [
-  {
-    title: "Total Job Posts",
-    value: "48",
-    icon: FileText,
-  },
-  {
-    title: "Total Applicants",
-    value: "1,284",
-    icon: Users,
-  },
-  {
-    title: "Active Jobs",
-    value: "18",
-    icon: Zap,
-  },
-  {
-    title: "Jobs Closed",
-    value: "32",
-    icon: CheckCircle2,
-  },
-];
-
-const applications = [
-  {
-    name: "Julianne Moore",
-    role: "Senior Product Designer",
-    date: "Oct 24, 2026",
-    experience: "6 years",
-    status: "Interviewing",
-  },
-  {
-    name: "Robert Downey",
-    role: "Backend Engineer",
-    date: "Oct 23, 2026",
-    experience: "4 years",
-    status: "New",
-  },
-  {
-    name: "Emma Stone",
-    role: "Marketing Lead",
-    date: "Oct 22, 2026",
-    experience: "8 years",
-    status: "Reviewing",
-  },
-  {
-    name: "Chris Pratt",
-    role: "Product Manager",
-    date: "Oct 21, 2026",
-    experience: "5 years",
-    status: "Rejected",
-  },
-];
-
-const companies = [
-  {
-    name: "Google Inc.",
-    description: "Technology · Mountain View",
-    jobs: 24,
-    icon: "G",
-  },
-  {
-    name: "Meta Platforms",
-    description: "Social Media · Menlo Park",
-    jobs: 18,
-    icon: "M",
-  },
-  {
-    name: "Stripe",
-    description: "Fintech · San Francisco",
-    jobs: 12,
-    icon: "S",
-  },
-  {
-    name: "Tesla",
-    description: "Automotive · Austin",
-    jobs: 31,
-    icon: "T",
-  },
-];
+import { headers } from "next/headers";
+import Link from "next/link";
 
 const statusStyles = {
   Interviewing: "bg-emerald-500/15 text-emerald-400",
@@ -96,27 +19,123 @@ const statusStyles = {
   Rejected: "bg-red-500/15 text-red-400",
 };
 
-const DashboardPage = () => {
+const DashboardPage = async () => {
+
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  const id = session?.user?.id
+  const res = await getRoleByUserID(id);
+  const resPonce = await closedJobs(id);
+  const activeJob = await activeJobs(id)
+
+  const stats = [
+    {
+      title: "Total Job Posts",
+      value: res.length,
+      icon: FileText,
+      href: "/dashbord/jobpost",
+    },
+    {
+      title: "Total Applicants",
+      value: "1,284",
+      icon: Users,
+      href: "/dashbord/applicent",
+    },
+    {
+      title: "Active Jobs",
+      value: activeJob.length,
+      icon: Zap,
+      href: "/dashbord/activeJobs",
+    },
+    {
+      title: "Jobs Closed",
+      value: resPonce.length,
+      icon: CheckCircle2,
+      href: "/dashbord/jobclosed",
+    },
+  ];
+
+  const applications = [
+    {
+      name: "Julianne Moore",
+      role: "Senior Product Designer",
+      date: "Oct 24, 2026",
+      experience: "6 years",
+      status: "Interviewing",
+    },
+    {
+      name: "Robert Downey",
+      role: "Backend Engineer",
+      date: "Oct 23, 2026",
+      experience: "4 years",
+      status: "New",
+    },
+    {
+      name: "Emma Stone",
+      role: "Marketing Lead",
+      date: "Oct 22, 2026",
+      experience: "8 years",
+      status: "Reviewing",
+    },
+    {
+      name: "Chris Pratt",
+      role: "Product Manager",
+      date: "Oct 21, 2026",
+      experience: "5 years",
+      status: "Rejected",
+    },
+  ];
+
+  const companies = [
+    {
+      name: "Google Inc.",
+      description: "Technology · Mountain View",
+      jobs: 24,
+      icon: "G",
+    },
+    {
+      name: "Meta Platforms",
+      description: "Social Media · Menlo Park",
+      jobs: 18,
+      icon: "M",
+    },
+    {
+      name: "Stripe",
+      description: "Fintech · San Francisco",
+      jobs: 12,
+      icon: "S",
+    },
+    {
+      name: "Tesla",
+      description: "Automotive · Austin",
+      jobs: 31,
+      icon: "T",
+    },
+  ];
+
+  const userName = session?.user?.name;
+  // console.log(session?.user?.name)
   return (
     <div className="space-y-8">
       <section>
         <h1 className="text-xl font-medium tracking-tight sm:text-2xl">
-          Welcome back, Alex Sterling
+          Welcome back, {userName}
         </h1>
       </section>
 
       <section className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        {stats.map(({ title, value, icon: Icon }) => (
-          <div
-            key={title}
-            className="rounded-lg border border-[#303030] bg-[#1b1b1b] p-4 transition hover:border-[#484848]"
-          >
-            <div className="mb-4 flex h-9 w-9 items-center justify-center rounded-md bg-[#303030] text-gray-200">
-              <Icon size={18} strokeWidth={1.7} />
+        {stats.map(({ title, value, icon: Icon, href }) => (
+          <Link key={title} href={href}>
+            <div className="rounded-lg border border-[#303030] bg-[#1b1b1b] p-4 transition hover:border-[#484848]">
+              <div className="mb-4 flex h-9 w-9 items-center justify-center rounded-md bg-[#303030] text-gray-200">
+                <Icon size={18} strokeWidth={1.7} />
+              </div>
+              <p className="text-xs text-gray-400">{title}</p>
+              <p className="mt-1 text-2xl font-medium">{value}</p>
             </div>
-            <p className="text-xs text-gray-400">{title}</p>
-            <p className="mt-1 text-2xl font-medium">{value}</p>
-          </div>
+          </Link>
         ))}
       </section>
 

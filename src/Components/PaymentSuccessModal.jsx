@@ -70,7 +70,7 @@ const PaymentSuccessModal = ({
           </button>
         ) : (
           <Link
-            href={user.role === "recruiter" ? "/dashbord" : "/seekerdashbord"}
+            href={user?.role === "recruiter" ? "/dashbord" : "/seekerdashbord"}
             className="w-full bg-white hover:bg-gray-100 text-black font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-all duration-200 text-sm shadow-lg"
           >
             <span>Go to Workspace Dashboard</span>

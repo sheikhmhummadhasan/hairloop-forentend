@@ -1,19 +1,26 @@
+
 "use client";
 
 import { authClient } from "@/lib/auth-client";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-toastify";
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
-  const { data: session, isPending } = authClient.useSession();
+  const [loggingOut, setLoggingOut] = useState(false);
 
+  const pathname = usePathname();
+  const router = useRouter();
+
+  const { data: session, isPending } = authClient.useSession();
   const user = session?.user;
-  console.log(user);
 
   const handleLogout = async () => {
+    setLoggingOut(true);
+
     try {
       const { error } = await authClient.signOut();
 
@@ -21,10 +28,15 @@ const Navbar = () => {
         toast.error(error.message || "Logout failed!");
         return;
       }
+
       toast.success("Logout successfully done!");
       setMenuOpen(false);
+      router.push('/')
+      router.refresh();
     } catch (error) {
       toast.error(error.message || "Something went wrong!");
+    } finally {
+      setLoggingOut(false);
     }
   };
 
@@ -33,7 +45,8 @@ const Navbar = () => {
     { href: "/pricing", label: "Pricing" },
     { href: "/company", label: "Company" },
   ];
-  if (!isPending && user) {
+
+  if (user) {
     navLinks.push({
       href: user.role === "recruiter" ? "/dashbord" : "/seekerdashbord",
       label: "Dashboard",
@@ -59,7 +72,9 @@ const Navbar = () => {
             <Link
               key={link.href}
               href={link.href}
-              className="text-sm font-medium text-gray-300 transition hover:text-white"
+              className={`text-sm font-medium transition hover:text-white ${
+                pathname === link.href ? "text-white" : "text-gray-300"
+              }`}
             >
               {link.label}
             </Link>
@@ -90,9 +105,10 @@ const Navbar = () => {
 
               <button
                 onClick={handleLogout}
-                className="rounded-xl border border-white/15 px-4 py-2.5 text-sm font-semibold text-white transition hover:border-red-400 hover:bg-red-500/10 hover:text-red-300"
+                disabled={loggingOut}
+                className="rounded-xl border border-white/15 px-4 py-2.5 text-sm font-semibold text-white transition hover:border-red-400 hover:bg-red-500/10 hover:text-red-300 disabled:opacity-50"
               >
-                Logout
+                {loggingOut ? "Logging out..." : "Logout"}
               </button>
             </div>
           ) : (
@@ -132,12 +148,15 @@ const Navbar = () => {
                 key={link.href}
                 href={link.href}
                 onClick={() => setMenuOpen(false)}
-                className="rounded-lg px-3 py-3 text-sm font-medium text-gray-300 transition hover:bg-white/5 hover:text-white"
+                className={`rounded-lg px-3 py-3 text-sm font-medium transition hover:bg-white/5 hover:text-white ${
+                  pathname === link.href ? "text-white" : "text-gray-300"
+                }`}
               >
                 {link.label}
               </Link>
             ))}
           </div>
+
           <div className="h-px bg-white/10" />
 
           {isPending ? null : user ? (
@@ -168,9 +187,10 @@ const Navbar = () => {
 
               <button
                 onClick={handleLogout}
-                className="w-full rounded-xl border border-red-400/30 px-4 py-3 text-sm font-semibold text-red-300 transition hover:bg-red-500/10"
+                disabled={loggingOut}
+                className="w-full rounded-xl border border-red-400/30 px-4 py-3 text-sm font-semibold text-red-300 transition hover:bg-red-500/10 disabled:opacity-50"
               >
-                Logout
+                {loggingOut ? "Logging out..." : "Logout"}
               </button>
             </div>
           ) : (
@@ -182,6 +202,7 @@ const Navbar = () => {
               >
                 Sign In
               </Link>
+
               <Link
                 href="/signup"
                 onClick={() => setMenuOpen(false)}

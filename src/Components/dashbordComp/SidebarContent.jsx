@@ -9,6 +9,7 @@ import {
   Users,
   Settings,
 } from "lucide-react";
+import { authClient, useSession } from "@/lib/auth-client";
 
 const navigation = [
   { name: "Dashboard", href: "/dashbord", icon: LayoutDashboard },
@@ -20,6 +21,10 @@ const navigation = [
 
 export function SidebarContent({ setMenuOpen }) {
   const pathname = usePathname();
+
+   const { data: session, isPending } = useSession();
+  //  console.log(session?.user)
+   const userName = session?.user?.name
 
   const isActive = (href) => {
     if (href === "/dashbord") return pathname === href;
@@ -45,7 +50,7 @@ export function SidebarContent({ setMenuOpen }) {
               AS
             </div>
             <div>
-              <p className="text-xs font-semibold text-white">Alex Sterling</p>
+              <p className="text-xs font-semibold text-white">{userName}</p>
               <p className="text-[10px] text-gray-500">Recruiter</p>
             </div>
           </div>
@@ -86,7 +91,7 @@ export function SidebarContent({ setMenuOpen }) {
             AS
           </div>
           <div>
-            <p className="text-[11px] font-medium text-white">Alex Sterling</p>
+            <p className="text-[11px] font-medium text-white">{userName}</p>
             <p className="text-[9px] text-gray-500">Premium Account</p>
           </div>
         </div>

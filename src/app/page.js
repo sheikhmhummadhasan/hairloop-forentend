@@ -1,18 +1,27 @@
+export const instant = false
 import CtaSection from "@/Components/CtaSection";
 import FeaturesSection from "@/Components/FeaturesSection";
 import Hero from "@/Components/Hero";
 import Jobs from "@/Components/Jobs";
 import PricingSection from "@/Components/PricingSection";
-import Image from "next/image";
+import { getRole } from "@/lib/mechine";
+import { Suspense } from "react";
 
-export default function Home() {
+const JobsSection = async () => {
+  const jobs = await getRole();
+  return <Jobs jobs={jobs} />;
+};
+
+const Home = () => {
   return (
     <>
       <Hero />
-      <Jobs/>
+      <JobsSection />
       <FeaturesSection />
       <PricingSection />
       <CtaSection />
     </>
   );
-}
+};
+
+export default Home;

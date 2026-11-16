@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from "react";
@@ -11,20 +10,16 @@ import {
   Image as ImageIcon,
   ChevronDown,
 } from "lucide-react";
+import { postCompanyData } from "@/lib/mechine";
+import { useRouter } from "next/navigation";
+import { useSession } from "@/lib/auth-client";
 
 const NoCompany = () => {
   const [showFaq, setShowFaq] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
   const [logo, setLogo] = useState(null);
   const [logoPreview, setLogoPreview] = useState("");
-  const [formData, setFormData] = useState({
-    name: "",
-    industry: "technology",
-    website: "",
-    location: "",
-    employees: "1-10",
-    description: "",
-  });
+  const [formData, setFormData] = useState();
 
   const updateField = (e) => {
     const { name, value } = e.target;
@@ -60,15 +55,24 @@ const NoCompany = () => {
     setLogoPreview(URL.createObjectURL(file));
   };
 
-  const handleSubmit = (e) => {
+  const router = useRouter();
+  const {data:session, error} = useSession()
+  console.log(session?.user?.id)
+  const createdUser = session?.user?.id
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    const formData = new FormData(e.target);
+    const date = new Date();
+    formData.append("cratedAT", date.toISOString());
+    formData.append("createdBY", createdUser)
 
-    if (!formData.name.trim() || !formData.location.trim()) {
-      alert("Please enter your company name and location.");
-      return;
+    const data = Object.fromEntries(formData.entries());
+
+    const res = await postCompanyData(data);
+    if (res?.insertedId || res?.acknowledged) {
+      router.push("/dashbord");
     }
-
-    alert("Form validated! Connect your backend to save the company.");
   };
 
   return (
@@ -219,13 +223,16 @@ const NoCompany = () => {
             <form onSubmit={handleSubmit} className="space-y-5 p-5 sm:p-7">
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
-                  <label htmlFor="company-name" className="mb-2 block text-xs font-medium text-gray-300">
+                  <label
+                    htmlFor="company-name"
+                    className="mb-2 block text-xs font-medium text-gray-300"
+                  >
                     Company Name *
                   </label>
                   <input
                     id="company-name"
                     name="name"
-                    value={formData.name}
+                    // value={formData.name}
                     onChange={updateField}
                     required
                     maxLength={100}
@@ -235,14 +242,17 @@ const NoCompany = () => {
                 </div>
 
                 <div>
-                  <label htmlFor="industry" className="mb-2 block text-xs font-medium text-gray-300">
+                  <label
+                    htmlFor="industry"
+                    className="mb-2 block text-xs font-medium text-gray-300"
+                  >
                     Industry / Category *
                   </label>
                   <div className="relative">
                     <select
                       id="industry"
                       name="industry"
-                      value={formData.industry}
+                      // value={formData.industry}
                       onChange={updateField}
                       className="w-full appearance-none rounded-lg border border-[#333333] bg-[#202020] px-3 py-3 pr-9 text-sm text-white outline-none focus:border-gray-500"
                     >
@@ -254,19 +264,25 @@ const NoCompany = () => {
                       <option value="retail">Retail</option>
                       <option value="other">Other</option>
                     </select>
-                    <ChevronDown size={15} className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                    <ChevronDown
+                      size={15}
+                      className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
+                    />
                   </div>
                 </div>
 
                 <div>
-                  <label htmlFor="company-website" className="mb-2 block text-xs font-medium text-gray-300">
+                  <label
+                    htmlFor="company-website"
+                    className="mb-2 block text-xs font-medium text-gray-300"
+                  >
                     Website URL
                   </label>
                   <input
                     id="company-website"
                     name="website"
                     type="url"
-                    value={formData.website}
+                    // value={formData.website}
                     onChange={updateField}
                     placeholder="https://www.company.com"
                     className="w-full rounded-lg border border-[#333333] bg-[#202020] px-3 py-3 text-sm text-white outline-none placeholder:text-gray-600 focus:border-gray-500"
@@ -274,15 +290,21 @@ const NoCompany = () => {
                 </div>
 
                 <div>
-                  <label htmlFor="company-location" className="mb-2 block text-xs font-medium text-gray-300">
+                  <label
+                    htmlFor="company-location"
+                    className="mb-2 block text-xs font-medium text-gray-300"
+                  >
                     Location *
                   </label>
                   <div className="relative">
-                    <MapPin size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
+                    <MapPin
+                      size={16}
+                      className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"
+                    />
                     <input
                       id="company-location"
                       name="location"
-                      value={formData.location}
+                      // value={formData.location}
                       onChange={updateField}
                       required
                       placeholder="City, Country"
@@ -292,15 +314,18 @@ const NoCompany = () => {
                 </div>
 
                 <div>
-                  <label htmlFor="employees" className="mb-2 block text-xs font-medium text-gray-300">
+                  <label
+                    htmlFor="employees"
+                    className="mb-2 block text-xs font-medium text-gray-300"
+                  >
                     Employee Count
                   </label>
                   <div className="relative">
                     <select
                       id="employees"
                       name="employees"
-                      value={formData.employees}
-                      onChange={updateField}
+                      // value={formData.employees}
+                      // onChange={updateField}
                       className="w-full appearance-none rounded-lg border border-[#333333] bg-[#202020] px-3 py-3 pr-9 text-sm text-white outline-none focus:border-gray-500"
                     >
                       <option value="1-10">1–10 employees</option>
@@ -308,12 +333,18 @@ const NoCompany = () => {
                       <option value="51-200">51–200 employees</option>
                       <option value="201+">201+ employees</option>
                     </select>
-                    <ChevronDown size={15} className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                    <ChevronDown
+                      size={15}
+                      className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
+                    />
                   </div>
                 </div>
 
                 <div>
-                  <label htmlFor="company-logo" className="mb-2 block text-xs font-medium text-gray-300">
+                  <label
+                    htmlFor="company-logo"
+                    className="mb-2 block text-xs font-medium text-gray-300"
+                  >
                     Company Logo
                   </label>
                   <label
@@ -351,13 +382,16 @@ const NoCompany = () => {
               </div>
 
               <div>
-                <label htmlFor="company-description" className="mb-2 block text-xs font-medium text-gray-300">
+                <label
+                  htmlFor="company-description"
+                  className="mb-2 block text-xs font-medium text-gray-300"
+                >
                   Brief Description
                 </label>
                 <textarea
                   id="company-description"
                   name="description"
-                  value={formData.description}
+                  // value={formData.description}
                   onChange={updateField}
                   rows={4}
                   maxLength={1000}

@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -7,22 +8,12 @@ import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { createAuthClient } from "better-auth/client";
 
+const authClient = createAuthClient();
+
 const SigninForm = () => {
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const router = useRouter();
-
-  const authClient = createAuthClient();
-  const signIn = async () => {
-    const {data, error} = await authClient.signIn.social({
-      provider: "google",
-    });
-    if(data){
-      toast.success(`login successfully done`)
-    }else{
-     toast.error(error.message || "Something went wrong!")
-    }
-  };
-
 
   const handleSignin = async (e) => {
     e.preventDefault();
@@ -32,13 +23,13 @@ const SigninForm = () => {
     const Data = Object.fromEntries(formData.entries());
 
     try {
-      const signin = await signIn.email({
+      const { data, error } = await authClient.signIn.email({
         email: Data.email,
         password: Data.password,
       });
 
-      if (signin.error) {
-        toast.error(signin.error.message || "Login failed!");
+      if (error) {
+        toast.error(error.message || "Login failed!");
         return;
       }
 
@@ -46,8 +37,29 @@ const SigninForm = () => {
       router.push("/");
     } catch (error) {
       toast.error(error.message || "Something went wrong!");
+      console.log(error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    setGoogleLoading(true);
+
+    try {
+      const { error } = await authClient.signIn.social({
+        provider: "google",
+        callbackURL: "/",
+      });
+
+      if (error) {
+        toast.error(error.message || "Google login failed!");
+      }
+    } catch (error) {
+      toast.error(error.message || "Something went wrong!");
+      console.log(error);
+    } finally {
+      setGoogleLoading(false);
     }
   };
 
@@ -65,10 +77,7 @@ const SigninForm = () => {
 
         <form onSubmit={handleSignin} className="space-y-5">
           <div className="flex flex-col gap-2">
-            <label
-              htmlFor="email"
-              className="text-sm font-medium text-gray-200"
-            >
+            <label htmlFor="email" className="text-sm font-medium text-gray-200">
               Email Address
             </label>
             <Input
@@ -83,10 +92,7 @@ const SigninForm = () => {
           </div>
 
           <div className="flex flex-col gap-2">
-            <label
-              htmlFor="password"
-              className="text-sm font-medium text-gray-200"
-            >
+            <label htmlFor="password" className="text-sm font-medium text-gray-200">
               Password
             </label>
             <Input
@@ -111,7 +117,7 @@ const SigninForm = () => {
 
           <Button
             type="submit"
-            isDisabled={loading}
+            isDisabled={loading || googleLoading}
             className="w-full bg-violet-600 py-3 font-semibold text-white transition hover:bg-violet-500"
           >
             {loading ? "Signing in..." : "Sign In"}
@@ -127,11 +133,12 @@ const SigninForm = () => {
         <Button
           type="button"
           variant="bordered"
-          onClick={signIn}
+          isDisabled={loading || googleLoading}
+          onPress={handleGoogleLogin}
           className="w-full border border-white/15 bg-[#27272a] py-3 font-medium text-white transition hover:bg-[#3f3f46]"
         >
           <FcGoogle size={20} />
-          Continue with Google
+          {googleLoading ? "Connecting..." : "Continue with Google"}
         </Button>
 
         <p className="mt-6 text-center text-sm text-gray-400">

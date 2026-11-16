@@ -24,7 +24,7 @@ const SignupForm = () => {
   };
 
   const [role, setRole] = useState("seeker");
-  console.log(role);
+
   const handleSignup = async (e) => {
     e.preventDefault();
 
@@ -32,14 +32,12 @@ const SignupForm = () => {
     const data = Object.fromEntries(formData.entries());
     data.role = role;
 
-    console.log(data);
     const singup = await signUp.email({
       name: data.name,
       email: data.email,
       password: data.password,
       role: data.role,
     });
-    console.log(singup);
     if (!singup) {
       toast.error("Somthing went to wrong");
     } else {

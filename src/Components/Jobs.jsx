@@ -1,64 +1,12 @@
+import { getRole } from "@/lib/mechine";
 import Link from "next/link";
 import { FaMapMarkerAlt, FaBriefcase, FaArrowRight } from "react-icons/fa";
 
-const jobs = [
-  {
-    id: 1,
-    title: "Frontend Developer",
-    description:
-      "Showcase your commitment to diversity and inclusion by highlighting initiatives",
-    location: "New York, USA",
-    type: "Hybrid",
-    salary: "€25-€40/hour",
-  },
-  {
-    id: 2,
-    title: "Frontend Developer",
-    description:
-      "Showcase your commitment to diversity and inclusion by highlighting initiatives",
-    location: "New York, USA",
-    type: "Hybrid",
-    salary: "€25-€40/hour",
-  },
-  {
-    id: 3,
-    title: "Frontend Developer",
-    description:
-      "Showcase your commitment to diversity and inclusion by highlighting initiatives",
-    location: "New York, USA",
-    type: "Hybrid",
-    salary: "€25-€40/hour",
-  },
-  {
-    id: 4,
-    title: "Frontend Developer",
-    description:
-      "Showcase your commitment to diversity and inclusion by highlighting initiatives",
-    location: "New York, USA",
-    type: "Hybrid",
-    salary: "€25-€40/hour",
-  },
-  {
-    id: 5,
-    title: "Frontend Developer",
-    description:
-      "Showcase your commitment to diversity and inclusion by highlighting initiatives",
-    location: "New York, USA",
-    type: "Hybrid",
-    salary: "€25-€40/hour",
-  },
-  {
-    id: 6,
-    title: "Frontend Developer",
-    description:
-      "Showcase your commitment to diversity and inclusion by highlighting initiatives",
-    location: "New York, USA",
-    type: "Hybrid",
-    salary: "€25-€40/hour",
-  },
-];
 
-const Jobs = () => {
+
+const Jobs = async({jobs}) => {
+  console.log(jobs)
+
   return (
     <section className="bg-black px-4 py-16 text-white sm:px-6 sm:py-20 lg:px-8">
       <div className="mx-auto max-w-[1320px]">
@@ -70,7 +18,7 @@ const Jobs = () => {
           </div>
 
           <h2 className="text-2xl font-semibold leading-tight tracking-tight sm:text-3xl lg:text-4xl">
-            The roles you'd never
+            The roles youd never
             <br />
             find by searching
           </h2>
@@ -79,11 +27,11 @@ const Jobs = () => {
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
           {jobs.map((job) => (
             <article
-              key={job.id}
+              key={job._id}
               className="group flex min-h-[178px] flex-col rounded-2xl border border-white/[0.04] bg-[#151515] p-4 transition duration-300 hover:-translate-y-1 hover:border-[#7965ff]/30 hover:bg-[#19191d] sm:min-h-[178px] sm:p-5"
             >
               <h3 className="text-base font-medium tracking-tight text-white sm:text-lg">
-                {job.title}
+                {job.jobTitle}
               </h3>
 
               <p className="mt-2 line-clamp-2 text-[11px] leading-5 text-neutral-400 sm:text-xs">
@@ -98,7 +46,7 @@ const Jobs = () => {
 
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-[#222222] px-2 py-1 text-[10px] text-neutral-200">
                   <FaBriefcase className="text-[#d98af7]" />
-                  {job.type}
+                  {job.benefits[0]}
                 </span>
               </div>
 
@@ -111,7 +59,7 @@ const Jobs = () => {
 
               <div className="mt-auto pt-5">
                 <Link
-                  href={`/browse/${job.id}`}
+                  href={`/browse/${job._id}`}
                   className="inline-flex items-center gap-2 text-[11px] font-medium text-white transition-colors hover:text-[#a99cff]"
                 >
                   Apply Now

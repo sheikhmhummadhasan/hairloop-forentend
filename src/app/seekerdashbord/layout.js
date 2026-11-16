@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import { useSession } from "@/lib/auth-client";
 
 const navigation = [
   { name: "Dashboard", href: "/seekerdashbord", icon: LayoutDashboard },
@@ -43,6 +44,10 @@ export default function SeekerDashboardLayout({ children }) {
   const [collapsed, setCollapsed] = useState(false);
 
   const isActive = (href) => pathname === href;
+
+  const {data:session, error} = useSession();
+  const userName = session?.user?.name;
+  // console.log(userName)
 
   return (
     <div className="min-h-screen bg-[#0f0f11] font-sans text-gray-200">
@@ -104,7 +109,7 @@ export default function SeekerDashboardLayout({ children }) {
           {!collapsed && (
             <div className="min-w-0">
               <h4 className="text-sm font-semibold text-white">
-                Seeker Portal
+                {userName}
               </h4>
               <p className="text-xs text-gray-400">Professional Tier</p>
             </div>

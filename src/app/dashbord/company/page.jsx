@@ -1,35 +1,21 @@
-"use client";
-
-import AvablavelCompany from "@/Components/dashbordComp/AvablavleCompany";
+export const instant = false;
+import { headers } from 'next/headers';
 import NoCompany from "@/Components/dashbordComp/NoCompany";
-import { useEffect, useState } from "react";
+import { auth } from "@/lib/auth";
+import { getCompanyById } from "@/lib/mechine";
+import AvablavelCompany from '@/Components/dashbordComp/AvablavleCompany';
 
-const Company = () => {
-  const [company, setCompany] = useState(null);
-  const [loading, setLoading] = useState(true);
+const Company = async () => {
 
-  useEffect(() => {
-    const getCompany = async () => {
-      try {
-        const res = await fetch("/api/company");
-        const data = await res.json();
-
-        setCompany(data.company || null);
-      } catch (error) {
-        setCompany(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    getCompany();
-  }, []);
-
-  if (loading) return <p>Loading...</p>;
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+  const id = session?.user?.id
+  const company = await getCompanyById(id);
 
   return (
     <div>
-      {company ? <AvablavelCompany company={company} /> : <NoCompany />}
+      {company  ? <AvablavelCompany company={company}/> : <NoCompany/>}
     </div>
   );
 };
