@@ -14,10 +14,10 @@ import {
   Layers,
 } from "lucide-react";
 import { toast } from "react-toastify";
-import { applicationForJob } from "@/lib/mechine";
+import { applicationForJob, savedJobsOpration } from "@/lib/mechine";
 import { useSession } from "@/lib/auth-client";
 
-const BrowseDetailPageClient = ({ res }) => {
+const BrowseDetailPageClient = ({ res, savedJobs }) => {
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [hasApplied, setHasApplied] = useState(false);
   const [showApplyModal, setShowApplyModal] = useState(false);
@@ -25,6 +25,7 @@ const BrowseDetailPageClient = ({ res }) => {
 
   const { data: session } = useSession();
   const userData = session?.user;
+  const usersID = session?.user?.id
 
   const {
     benefits = [],
@@ -39,9 +40,43 @@ const BrowseDetailPageClient = ({ res }) => {
     skills = [],
     verifiedBadge,
     website,
+    createdBY,
     _id,
+    saved,
+    cratedAT,
   } = res || {};
 
+  const thisJobId = _id;
+
+  const save = {
+    benefits,
+    companyName,
+    description,
+    cratedAT,
+    experience,
+    jobTitle,
+    location,
+    requirements,
+    responsibilities,
+    salary,
+    skills,
+    verifiedBadge,
+    website,
+    createdBY,
+    saved,
+    thisJobId,
+    usersID
+  }
+
+  console.log(save)
+  const handelSaved = async () => {
+    const result = await savedJobsOpration(save)
+
+    if (result.modifiedCount > 0) {
+      setIsBookmarked(!isBookmarked);
+    }
+    console.log(result)
+  };
   const handleApply = async (e) => {
     e.preventDefault();
 
@@ -63,6 +98,7 @@ const BrowseDetailPageClient = ({ res }) => {
 
       const applicationData = {
         jobId: _id,
+        createdBY: createdBY,
         jobTitle,
         companyName,
         applicantId: userData.id,
@@ -146,7 +182,7 @@ const BrowseDetailPageClient = ({ res }) => {
 
             <div className="flex items-center gap-3 w-full sm:w-auto justify-end shrink-0">
               <button
-                onClick={() => setIsBookmarked(!isBookmarked)}
+                onClick={() => handelSaved()}
                 className={`p-3 rounded-xl border transition-all ${
                   isBookmarked
                     ? "bg-amber-500/10 border-amber-500/30 text-amber-400"

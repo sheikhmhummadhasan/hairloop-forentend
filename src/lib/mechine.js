@@ -161,19 +161,97 @@ export const getApplicationData = async () => {
 
 // appliction data get by creadet id
 export const getApplicationDataByUserID = async (id) => {
-  const prom = await fetch(`http://localhost:5000/applications/${id}`);
+  const prom = await fetch(
+    `http://localhost:5000/applications_get_by_appliID/${id}`,
+  );
   const res = await prom.json();
   return res;
 };
 // appliction rejection data get by creadet id
 export const getApplicationRejectionDataByUserID = async (id) => {
-  const prom = await fetch(`http://localhost:5000/applications_rejection/${id}`);
+  const prom = await fetch(
+    `http://localhost:5000/applications_rejection/${id}`,
+  );
   const res = await prom.json();
   return res;
 };
-// appliction selected data get by creadet id
-export const getApplicationSelectionDataByUserID = async (id) => {
-  const prom = await fetch(`http://localhost:5000/applications_selection/${id}`);
+
+// appliction got with mycompany id
+export const getApplicationMyCompany = async (id) => {
+  const prom = await fetch(`http://localhost:5000/applications_jobid/${id}`);
   const res = await prom.json();
   return res;
 };
+
+// update status of haired and rejection
+export const updateApplicationStatus = async (id, status) => {
+  console.log(id, status);
+  const prom = await fetch(`http://localhost:5000/application_status/${id}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ status }),
+  });
+  const res = await prom.json();
+  console.log(res);
+  return await res;
+};
+
+// rejection data for seeker
+export const getRejection = async (id) => {
+  const prom = await fetch(`http://localhost:5000/application_rejected/${id}`);
+  const res = await prom.json();
+  return res;
+};
+// offer data for seeker
+export const getOfferd = async (id) => {
+  const prom = await fetch(`http://localhost:5000/application_offerd/${id}`);
+  const res = await prom.json();
+  return res;
+};
+// get application pending data;
+export const getapplicationPendingData = async (id) => {
+  const prom = await fetch(`http://localhost:5000/applications_pending/${id}`);
+  const res = await prom.json();
+  return res;
+};
+
+// get saved jobs
+export const getSavedJobs = async (id) => {
+  const prom = await fetch(`http://localhost:5000/getsavedjobs/${id}`);
+  const res = await prom.json();
+  return res;
+};
+
+// opration save jobs false to true
+export const savedJobsOpration = async(data)=>{
+   const prom = await fetch(`http://localhost:5000/getsavedjobs`,{
+    method:'POST',
+    headers:{
+      'content-type': 'application/json'
+    },
+    body:JSON.stringify(data)
+   });
+  const res = await prom.json();
+  if(!res){
+    toast.error('somthings went to wrong!')
+  }else{
+    toast.success('Saved This jobs Successfully')
+  }
+  return res;
+}
+
+// delete saved
+export const deleteSave = async(id) => {
+  const prom = await fetch(`http://localhost:5000/getsavedjobs/${id}`,{
+    method:"DELETE"
+  })
+  const res = await prom.json();
+  if(!res){
+    toast.error('somthings went to wrong!')
+  }else{
+    toast.success('Saved This jobs Delete Successfully')
+  }
+  return res
+}

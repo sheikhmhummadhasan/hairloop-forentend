@@ -1,9 +1,13 @@
+export const instant = false
+import Jobs from '@/Components/Jobs';
+import { getRole } from '@/lib/mechine';
 import React from 'react';
 
-const JobsPage = () => {
+const JobsPage = async() => {
+    const jobs = await getRole();
     return (
         <div>
-            This is jobs page 
+            <Jobs jobs={jobs} />
         </div>
     );
 };

@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
-import { getApplicationData, getApplicationDataByUserID, getApplicationRejectionDataByUserID, getApplicationSelectionDataByUserID } from "@/lib/mechine";
+import { getApplicationData, getApplicationDataByUserID, getapplicationPendingData, getApplicationRejectionDataByUserID, getApplicationSelectionDataByUserID, getOfferd, getRejection } from "@/lib/mechine";
 
 export default async function SeekerDashboardPage() {
   const session = await auth.api.getSession({
@@ -23,13 +23,16 @@ export default async function SeekerDashboardPage() {
   const userName = session?.user?.name;
   const userEmail = session?.user?.email;
   const userID = session?.user?.id;
-  console.log(userName, userEmail);
+  // console.log(userName, userEmail);
 
   const res = await getApplicationData();
   const resById = await getApplicationDataByUserID(userID);
-  const resForRejection = await getApplicationRejectionDataByUserID()
-  const resForSelection = await getApplicationSelectionDataByUserID()
-  console.log(resById.length);
+  const resForRejection = await getApplicationRejectionDataByUserID(userID);
+  const getOffer = await getOfferd(userID);
+  const getPending = await getapplicationPendingData(userID)
+  // console.log(getOffer)
+
+  // console.log(resById);
   return (
     <div className="space-y-8 max-w-7xl mx-auto">
       {/* Top Stats Cards */}
@@ -40,7 +43,7 @@ export default async function SeekerDashboardPage() {
             <p className="text-xs font-medium text-gray-400">
               Applications Submitted
             </p>
-            <h2 className="text-3xl font-bold text-white mt-2">{res.length}</h2>
+            <h2 className="text-3xl font-bold text-white mt-2">{resById.length}</h2>
           </div>
           <div className="p-2 bg-gray-800/60 rounded-lg text-gray-300">
             <Send className="w-5 h-5" />
@@ -51,7 +54,7 @@ export default async function SeekerDashboardPage() {
           <div>
             <p className="text-xs font-medium text-gray-400">Pending</p>
             <h2 className="text-3xl font-bold text-white mt-2">
-              {resById.length}
+              {getPending.length}
             </h2>
           </div>
           <div className="p-2 bg-gray-800/60 rounded-lg text-amber-500">
@@ -72,7 +75,7 @@ export default async function SeekerDashboardPage() {
         <div className="bg-[#16161a] border border-gray-800 rounded-xl p-5 flex items-start justify-between">
           <div>
             <p className="text-xs font-medium text-gray-400">Offers Received</p>
-            <h2 className="text-3xl font-bold text-white mt-2">{resForSelection.length}</h2>
+            <h2 className="text-3xl font-bold text-white mt-2">{getOffer.length}</h2>
           </div>
           <div className="p-2 bg-gray-800/60 rounded-lg text-emerald-500">
             <Award className="w-5 h-5" />
@@ -109,7 +112,7 @@ export default async function SeekerDashboardPage() {
               <div className="w-full h-1.5 bg-gray-800 rounded-full overflow-hidden">
                 <div
                   className="h-full bg-white rounded-full"
-                  style={{ width: `${res.length * 2}%` }}
+                  style={{ width: `${resById.length * 2}%` }}
                 ></div>
               </div>
             </div>
@@ -123,7 +126,7 @@ export default async function SeekerDashboardPage() {
               <div className="w-full h-1.5 bg-gray-800 rounded-full overflow-hidden">
                 <div
                   className="h-full bg-amber-500 rounded-full"
-                  style={{ width: `${resById.length * 2}%` }}
+                  style={{ width: `${getPending.length * 2}%` }}
                 ></div>
               </div>
             </div>
@@ -160,12 +163,12 @@ export default async function SeekerDashboardPage() {
             <div>
               <div className="flex justify-between text-xs mb-1">
                 <span className="text-gray-400">Offered</span>
-                <span className="text-white font-medium">{resForSelection.length}</span>
+                <span className="text-white font-medium">{getOfferd.length}</span>
               </div>
               <div className="w-full h-1.5 bg-gray-800 rounded-full overflow-hidden">
                 <div
                   className="h-full bg-emerald-500 rounded-full"
-                  style={{ width: `${resForSelection.length*2}%` }}
+                  style={{ width: `${getOffer.length*2}%` }}
                 ></div>
               </div>
             </div>

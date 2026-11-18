@@ -18,7 +18,9 @@ const JobPostForm = () => {
     formData.append("cratedAT", date.toISOString());
     formData.append("createdBY", createdUser);
 
+
     const data = Object.fromEntries(formData.entries());
+    data.saved = false;
 
     data.skills = data.skills.split(",").map((item) => item.trim());
     data.responsibilities = data.responsibilities

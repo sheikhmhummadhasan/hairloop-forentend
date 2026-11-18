@@ -1,6 +1,12 @@
 export const instant = false;
 import { auth } from "@/lib/auth";
-import { activeJobs, closedJobs, getRoleByUserID } from "@/lib/mechine";
+import {
+  activeJobs,
+  closedJobs,
+  getApplicationMyCompany,
+  getRoleByCreatorID,
+  getRoleByUserID,
+} from "@/lib/mechine";
 import {
   FileText,
   Users,
@@ -13,22 +19,25 @@ import { headers } from "next/headers";
 import Link from "next/link";
 
 const statusStyles = {
-  Interviewing: "bg-emerald-500/15 text-emerald-400",
-  New: "bg-gray-500/20 text-gray-300",
-  Reviewing: "bg-amber-500/15 text-amber-400",
-  Rejected: "bg-red-500/15 text-red-400",
+  pending: "bg-yellow-500/10 text-yellow-400 border border-yellow-500/20",
+  offered: "bg-green-500/10 text-green-400 border border-green-500/20",
+  rejected: "bg-red-500/10 text-red-400 border border-red-500/20",
 };
 
 const DashboardPage = async () => {
-
   const session = await auth.api.getSession({
     headers: await headers(),
   });
 
-  const id = session?.user?.id
+  const id = session?.user?.id;
   const res = await getRoleByUserID(id);
   const resPonce = await closedJobs(id);
-  const activeJob = await activeJobs(id)
+  const activeJob = await activeJobs(id);
+  const applicnt = await getApplicationMyCompany(id);
+
+  console.log(applicnt.length);
+
+  console.log(applicnt.length);
 
   const stats = [
     {
@@ -39,7 +48,7 @@ const DashboardPage = async () => {
     },
     {
       title: "Total Applicants",
-      value: "1,284",
+      value: applicnt.length,
       icon: Users,
       href: "/dashbord/applicent",
     },
@@ -163,45 +172,62 @@ const DashboardPage = async () => {
                     <th className="px-4 py-4 font-medium">Status</th>
                   </tr>
                 </thead>
+
                 <tbody>
-                  {applications.map((application) => (
-                    <tr
-                      key={application.name}
-                      className="border-b border-[#292929] last:border-0 hover:bg-[#222222]"
-                    >
-                      <td className="whitespace-nowrap px-4 py-5">
-                        <div className="flex items-center gap-2">
-                          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#383838] text-[10px] font-semibold text-gray-300">
-                            {application.name
-                              .split(" ")
-                              .map((part) => part[0])
-                              .join("")}
+                  {applicnt.map((application) => {
+                    const applicantName =
+                      application.applicantName || "Unknown User";
+
+                    return (
+                      <tr
+                        key={application._id}
+                        className="border-b border-[#292929] last:border-0 hover:bg-[#222222]"
+                      >
+                        <td className="whitespace-nowrap px-4 py-5">
+                          <div className="flex items-center gap-2">
+                            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#383838] text-[10px] font-semibold text-gray-300">
+                              {applicantName
+                                .split(" ")
+                                .map((part) => part[0])
+                                .join("")
+                                .toUpperCase()}
+                            </div>
+
+                            <span className="font-medium text-gray-200">
+                              {applicantName}
+                            </span>
                           </div>
-                          <span className="font-medium text-gray-200">
-                            {application.name}
+                        </td>
+
+                        <td className="whitespace-nowrap px-4 py-5 text-gray-400">
+                          {application.jobTitle || "N/A"}
+                        </td>
+
+                        <td className="whitespace-nowrap px-4 py-5 text-gray-400">
+                          {application.appliedAt
+                            ? new Date(
+                                application.appliedAt,
+                              ).toLocaleDateString("en-GB")
+                            : "N/A"}
+                        </td>
+
+                        <td className="whitespace-nowrap px-4 py-5 text-gray-400">
+                          {application.companyName || "N/A"}
+                        </td>
+
+                        <td className="whitespace-nowrap px-4 py-5">
+                          <span
+                            className={`rounded-full px-2.5 py-1 text-[10px] font-medium capitalize ${
+                              statusStyles[application.status] ||
+                              "bg-gray-500/10 text-gray-400 border border-gray-500/20"
+                            }`}
+                          >
+                            {application.status || "pending"}
                           </span>
-                        </div>
-                      </td>
-                      <td className="whitespace-nowrap px-4 py-5 text-gray-400">
-                        {application.role}
-                      </td>
-                      <td className="whitespace-nowrap px-4 py-5 text-gray-400">
-                        {application.date}
-                      </td>
-                      <td className="whitespace-nowrap px-4 py-5 text-gray-400">
-                        {application.experience}
-                      </td>
-                      <td className="whitespace-nowrap px-4 py-5">
-                        <span
-                          className={`rounded-full px-2.5 py-1 text-[10px] font-medium ${
-                            statusStyles[application.status]
-                          }`}
-                        >
-                          {application.status}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
