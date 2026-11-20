@@ -1,4 +1,5 @@
 import { toast } from "react-toastify";
+import { stripe } from "./stripe";
 
 // GET ALL ROLE API
 export const getRole = async () => {
@@ -254,4 +255,37 @@ export const deleteSave = async(id) => {
     toast.success('Saved This jobs Delete Successfully')
   }
   return res
+}
+
+
+// post paymet hsitory
+export const paymentHistory = async (data) => {
+  const prom = await fetch("http://localhost:5000/paymentHistory", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!prom.ok) {
+    const errorText = await prom.text();
+    console.log("API Error:", prom.status, errorText);
+    return null;
+  }
+
+  const res = await prom.json();
+  return res;
+};
+
+// get payment history by 
+export const getHistyoyById = async(id) =>{
+  const prom = await fetch(`http://localhost:5000/paymentHistory/${id}`);
+    if (!prom.ok) {
+    const errorText = await prom.text();
+    console.log("API Error:", prom.status, errorText);
+    return null;
+  }
+  const res = await prom.json();
+  return res;
 }

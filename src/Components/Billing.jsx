@@ -2,51 +2,37 @@
 import React from "react";
 import {
   Download,
-  CreditCard,
   CheckCircle2,
   Plus,
-  HelpCircle,
 } from "lucide-react";
 
-const BILLING_HISTORY = [
-  {
-    id: "1",
-    date: "Sep 24, 2023",
-    plan: "Professional Tier",
-    amount: "$29.00",
-    trxId: "TRX-948102-HL",
-    status: "PAID",
-  },
-  {
-    id: "2",
-    date: "Aug 24, 2023",
-    plan: "Professional Tier",
-    amount: "$29.00",
-    trxId: "TRX-771920-HL",
-    status: "PAID",
-  },
-  {
-    id: "3",
-    date: "Jul 24, 2023",
-    plan: "Professional Tier",
-    amount: "$29.00",
-    trxId: "TRX-231906-HL",
-    status: "PAID",
-  },
-  {
-    id: "4",
-    date: "Jun 24, 2023",
-    plan: "Standard Tier",
-    amount: "$12.00",
-    trxId: "TRX-220199-HL",
-    status: "PAID",
-  },
-];
+const getNextBillingDate = (item) => {
+  if (!item?.paymentDate || item?.mode !== "subscription") return null;
 
-const Billing = () => {
+  const date = new Date(item.paymentDate);
+  if (Number.isNaN(date.getTime())) return null;
+
+  const targetMonth = date.getMonth() + 1;
+  date.setMonth(targetMonth);
+
+  // Handle month-end overflow (e.g., Jan 31 -> Feb 28/29)
+  if (date.getMonth() !== targetMonth % 12) {
+    date.setDate(0);
+  }
+
+  return date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+};
+
+const Billing = ({ history = [] }) => {
+  const latest = history[0] || {};
+  const nextBillingDate = getNextBillingDate(latest);
+
   return (
     <div className="p-6 md:p-10 space-y-8 max-w-6xl w-full mx-auto font-sans text-gray-200">
-      
       {/* HEADER TITLE */}
       <div>
         <h1 className="text-2xl md:text-3xl font-bold text-white tracking-tight">
@@ -59,7 +45,6 @@ const Billing = () => {
 
       {/* TOP SECTION: Current Plan & Payment Method */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
         {/* Current Plan Card (Takes 2 Columns) */}
         <div className="lg:col-span-2 bg-[#15171d] border border-[#21252f] rounded-2xl p-6 md:p-8 flex flex-col justify-between shadow-xl relative overflow-hidden">
           <div>
@@ -81,10 +66,12 @@ const Billing = () => {
                 </p>
               </div>
               <div className="text-left sm:text-right">
-                <span className="text-3xl font-extrabold text-white">$29</span>
+                <span className="text-3xl font-extrabold text-white">
+                  ${latest.amount ?? 29}
+                </span>
                 <span className="text-xs text-gray-400 font-medium">/mo</span>
                 <p className="text-[11px] text-gray-500 mt-0.5">
-                  Next billing date: Oct 24, 2023
+                  Next billing date: {nextBillingDate || "N/A"}
                 </p>
               </div>
             </div>
@@ -159,7 +146,7 @@ const Billing = () => {
                     CARD HOLDER
                   </span>
                   <span className="text-xs font-bold text-gray-200 uppercase tracking-tight">
-                    ALEXANDER SEEKER
+                    {latest.customer_details?.name || "ALEXANDER SEEKER"}
                   </span>
                 </div>
                 <div className="text-right">
@@ -180,7 +167,6 @@ const Billing = () => {
             <span>Add New Payment Method</span>
           </button>
         </div>
-
       </div>
 
       {/* BILLING HISTORY SECTION */}
@@ -189,7 +175,7 @@ const Billing = () => {
           <h2 className="text-lg font-bold text-white tracking-tight">
             Billing History
           </h2>
-          <button className="text-xs font-semibold text-gray-300 hover:text-white bg-[#15171d] hover:bg-[#1a1e27] border border-[#21252f] px-3.5 py-2 rounded-xl transition flex items-center gap-1.5">
+          <button onClick={() => window.print()} className="text-xs font-semibold text-gray-300 hover:text-white bg-[#15171d] hover:bg-[#1a1e27] border border-[#21252f] px-3.5 py-2 rounded-xl transition flex items-center gap-1.5">
             <Download className="w-3.5 h-3.5" />
             <span>Export PDF</span>
           </button>
@@ -209,23 +195,32 @@ const Billing = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#21252f]">
-                {BILLING_HISTORY.map((item) => (
-                  <tr key={item.id} className="hover:bg-[#1a1d26] transition-colors">
+                {history.map((item, idx) => (
+                  <tr
+                    key={item._id || item.sessionId || idx}
+                    className="hover:bg-[#1a1d26] transition-colors"
+                  >
                     <td className="py-4 px-6 text-gray-300 font-medium">
-                      {item.date}
+                      {item.paymentDate
+                        ? new Date(item.paymentDate).toLocaleDateString("en-US", {
+                            month: "short",
+                            day: "numeric",
+                            year: "numeric",
+                          })
+                        : "-"}
                     </td>
                     <td className="py-4 px-6 text-gray-300 font-medium">
-                      {item.plan}
+                      {item.mode || "Professional Tier"}
                     </td>
                     <td className="py-4 px-6 text-gray-300 font-semibold">
-                      {item.amount}
+                      ${Number(item.amount ?? (item.amount_total || 0) / 100).toFixed(2)}
                     </td>
                     <td className="py-4 px-6 font-mono text-gray-400 text-[11px]">
-                      {item.trxId}
+                      {item.subscription || item.sessionId || item._id}
                     </td>
                     <td className="py-4 px-6 text-right">
                       <span className="px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wider border text-emerald-400 border-emerald-800/40 bg-emerald-950/40">
-                        • {item.status}
+                        {(item.payment_status || "PAID").toUpperCase()}
                       </span>
                     </td>
                   </tr>
@@ -259,7 +254,6 @@ const Billing = () => {
           </a>
         </div>
       </div>
-
     </div>
   );
 };
