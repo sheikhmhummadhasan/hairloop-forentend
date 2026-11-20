@@ -20,6 +20,8 @@ export default async function Success({ searchParams }) {
     expand: ["line_items", "payment_intent"],
   });
 
+  console.log(session)
+
   const {
     status,
     customer_details: { email: customerEmail } = {},

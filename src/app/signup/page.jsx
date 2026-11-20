@@ -6,9 +6,15 @@ import { FcGoogle } from "react-icons/fc";
 import { signUp } from "@/lib/auth-client";
 import { toast } from "react-toastify";
 import { createAuthClient } from "better-auth/react";
+import { useRouter, useSearchParams } from "next/navigation";
+
 
 const SignupForm = () => {
   const [loading, setLoading] = useState(false);
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get('redirect') || '/';
+  const router = useRouter()
+  
 
   // নতুন: selected image রাখার জন্য state
   const [image, setImage] = useState(null);
@@ -27,7 +33,7 @@ const SignupForm = () => {
       toast.success("Signin successfully done");
 
       // নতুন: Google login success হলে page refresh
-      window.location.reload();
+      router.push(redirectTo)
     } else {
       toast.error(error.message || "Something went wrong!");
     }
@@ -100,7 +106,7 @@ const SignupForm = () => {
       toast.success("Sign up Successful...");
 
       // পরিবর্তন: signup success হলে page refresh
-      window.location.reload();
+      router.push(redirectTo);
 
     } catch (error) {
       toast.error(error.message || "Something went wrong!");
