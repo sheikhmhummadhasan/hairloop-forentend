@@ -22,7 +22,20 @@ const SavedJobs = ({ SavedJob }) => {
     }
   };
   return (
-    <div>
+    <div className="p-6 md:p-10 space-y-8 max-w-6xl w-full mx-auto font-sans text-gray-200">
+      <div>
+        <div className="flex items-center gap-2">
+          <span className="h-8 w-1 rounded-full bg-orange-400"></span>
+
+          <h1 className="text-3xl font-black tracking-tight text-white sm:text-4xl">
+            My Save Jobs
+          </h1>
+        </div>
+
+        <p className="mt-3 pl-3 text-sm text-[#a7a5a4] sm:text-base">
+          Track all your job applications and application status.
+        </p>
+      </div>
       {/* পরিবর্তন: SavedJob থাকলে jobs দেখাবে, না থাকলে empty state দেখাবে */}
       {SavedJob?.length > 0 ? (
         SavedJob.map((e) => {
@@ -129,8 +142,8 @@ const SavedJobs = ({ SavedJob }) => {
           </h2>
 
           <p className="mt-2 max-w-sm text-sm leading-6 text-gray-400">
-            You haven't saved any jobs yet. Browse available jobs and bookmark
-            the opportunities you're interested in.
+            You havent saved any jobs yet. Browse available jobs and bookmark
+            the opportunities youre interested in.
           </p>
 
           <Link

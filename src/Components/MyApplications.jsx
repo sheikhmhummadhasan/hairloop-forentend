@@ -97,7 +97,7 @@ const MyApplications = ({
   };
 
   return (
-    <div className="space-y-8">
+    <div className="p-6 md:p-10 space-y-8 max-w-6xl w-full mx-auto font-sans text-gray-200">
 
       {/* পরিবর্তন: Application dashboard heading */}
       <div>

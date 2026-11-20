@@ -1,5 +1,4 @@
 import { toast } from "react-toastify";
-import { stripe } from "./stripe";
 
 // GET ALL ROLE API
 export const getRole = async () => {

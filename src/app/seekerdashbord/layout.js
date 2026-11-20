@@ -35,6 +35,8 @@ const navigation = [
   },
   { name: "Billing", href: "/seekerdashbord/billing", icon: CreditCard },
   { name: "Settings", href: "/seekerdashbord/settings", icon: Settings },
+  { name: "Messages", href: "/seekerdashbord/messages", icon: Mail, },
+  { name: "Notifications", href: "/seekerdashbord/notifications", icon: Bell, },
 ];
 
 export default function SeekerDashboardLayout({ children }) {

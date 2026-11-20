@@ -23,6 +23,7 @@ import {
   getOfferd,
   getRejection,
 } from "@/lib/mechine";
+import Link from "next/link";
 
 export default async function SeekerDashboardPage() {
   const session = await auth.api.getSession({
@@ -114,9 +115,12 @@ export default async function SeekerDashboardPage() {
           </div>
           <h3 className="text-xl font-bold text-white">{userName}</h3>
           <p className="text-sm text-gray-400 mt-1">{userEmail}</p>
-          <button className="mt-6 w-full max-w-xs py-2 px-4 border border-gray-700 hover:border-gray-500 rounded-lg text-sm text-gray-300 font-medium transition">
+          <Link
+          href="/seekerdashbord/settings"
+           className="mt-6 w-full max-w-xs py-2 px-4 border border-gray-700 hover:border-gray-500 rounded-lg text-sm text-gray-300 font-medium transition"
+           >
             Edit Profile
-          </button>
+          </Link>
         </div>
 
         {/* Application Status Card */}
