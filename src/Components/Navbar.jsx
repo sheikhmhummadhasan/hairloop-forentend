@@ -1,4 +1,3 @@
-
 "use client";
 
 import { authClient } from "@/lib/auth-client";
@@ -31,7 +30,7 @@ const Navbar = () => {
 
       toast.success("Logout successfully done!");
       setMenuOpen(false);
-      router.push('/')
+      router.push("/");
       router.refresh();
     } catch (error) {
       toast.error(error.message || "Something went wrong!");
@@ -85,7 +84,9 @@ const Navbar = () => {
           {isPending ? null : user ? (
             <div className="flex items-center gap-3">
               {user.image ? (
+                // পরিবর্তন: signup থেকে ImageBB image URL এখানে দেখাবে
                 <Image
+                  key={user.image}
                   src={user.image}
                   alt={user.name || "User"}
                   width={40}
@@ -119,6 +120,7 @@ const Navbar = () => {
               >
                 Sign In
               </Link>
+
               <Link
                 href="/signup"
                 className="rounded-xl bg-[#5c53fe] px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-500/20 transition hover:bg-[#4940e8]"
@@ -163,7 +165,9 @@ const Navbar = () => {
             <div className="flex flex-col gap-4">
               <div className="flex items-center gap-3">
                 {user.image ? (
+                  // পরিবর্তন: mobile navbar-এও ImageBB profile image দেখাবে
                   <Image
+                    key={user.image}
                     src={user.image}
                     alt={user.name || "User"}
                     width={44}
@@ -181,6 +185,7 @@ const Navbar = () => {
                   <p className="truncate font-semibold text-white">
                     {user.name}
                   </p>
+
                   <p className="text-xs text-gray-400">Logged in</p>
                 </div>
               </div>

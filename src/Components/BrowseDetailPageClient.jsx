@@ -25,7 +25,8 @@ const BrowseDetailPageClient = ({ res, savedJobs }) => {
 
   const { data: session } = useSession();
   const userData = session?.user;
-  const usersID = session?.user?.id
+  const userRole = session?.user?.role;
+  const usersID = session?.user?.id;
 
   const {
     benefits = [],
@@ -68,30 +69,29 @@ const BrowseDetailPageClient = ({ res, savedJobs }) => {
     usersID
   }
 
-  console.log(save)
+  // console.log(save)
   const handelSaved = async () => {
+    if(userRole === 'recruiter'){
+      toast.error('This Fecturd only for Jobseeker!')
+      return
+    }
     const result = await savedJobsOpration(save)
-
-    if (result.modifiedCount > 0) {
+    if (result.modifiedCount > 0 ) {
       setIsBookmarked(!isBookmarked);
     }
     console.log(result)
   };
   const handleApply = async (e) => {
     e.preventDefault();
-
-    if (!userData) {
-      toast.error("Please login first!");
+    if (!userData && userRole === 'recruiter') {
+      toast.error("Please login first as jobseeker!");
       return;
     }
-
     if (!_id) {
       toast.error("Job information not found!");
       return;
     }
-
     setIsSubmitting(true);
-
     try {
       const formData = new FormData(e.target);
       const data = Object.fromEntries(formData.entries());
@@ -108,9 +108,7 @@ const BrowseDetailPageClient = ({ res, savedJobs }) => {
         appliedAt: new Date().toISOString(),
         status: "pending",
       };
-
       const result = await applicationForJob(applicationData);
-
       if (result?.insertedId || result?.acknowledged || result?.success) {
         // toast.success("Application submitted successfully!");
         setHasApplied(true);
@@ -124,7 +122,6 @@ const BrowseDetailPageClient = ({ res, savedJobs }) => {
       setIsSubmitting(false);
     }
   };
-
   if (!res) {
     return (
       <div className="min-h-screen bg-[#0e0f12] text-white flex items-center justify-center">

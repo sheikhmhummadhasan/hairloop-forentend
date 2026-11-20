@@ -5,19 +5,29 @@ import { Button, Description, Input, Label, Radio, RadioGroup } from "@heroui/re
 import { FcGoogle } from "react-icons/fc";
 import { signUp } from "@/lib/auth-client";
 import { toast } from "react-toastify";
-import { redirect } from "next/navigation";
 import { createAuthClient } from "better-auth/react";
 
 const SignupForm = () => {
   const [loading, setLoading] = useState(false);
 
+  // নতুন: selected image রাখার জন্য state
+  const [image, setImage] = useState(null);
+
+  // নতুন: image preview দেখানোর জন্য state
+  const [preview, setPreview] = useState("");
+
   const authClient = createAuthClient();
+
   const signIn = async () => {
     const { data, error } = await authClient.signIn.social({
       provider: "google",
     });
+
     if (data) {
-      toast.success(`Sigin successfully done`);
+      toast.success("Signin successfully done");
+
+      // নতুন: Google login success হলে page refresh
+      window.location.reload();
     } else {
       toast.error(error.message || "Something went wrong!");
     }
@@ -25,24 +35,77 @@ const SignupForm = () => {
 
   const [role, setRole] = useState("seeker");
 
+  // নতুন: image select করলে preview দেখাবে
+  const handleImageChange = (e) => {
+    const selectedImage = e.target.files?.[0];
+
+    if (!selectedImage) return;
+
+    setImage(selectedImage);
+    setPreview(URL.createObjectURL(selectedImage));
+  };
+
   const handleSignup = async (e) => {
     e.preventDefault();
 
-    const formData = new FormData(e.currentTarget);
-    const data = Object.fromEntries(formData.entries());
-    data.role = role;
+    setLoading(true);
 
-    const singup = await signUp.email({
-      name: data.name,
-      email: data.email,
-      password: data.password,
-      role: data.role,
-    });
-    if (!singup) {
-      toast.error("Somthing went to wrong");
-    } else {
-      toast.success("Sign up Successfull...");
-      redirect("/");
+    try {
+      const formData = new FormData(e.currentTarget);
+      const data = Object.fromEntries(formData.entries());
+
+      data.role = role;
+
+      // নতুন: ImageBB-তে image upload করা হচ্ছে
+      let imageUrl = "";
+
+      if (image) {
+        const imageData = new FormData();
+
+        imageData.append("image", image);
+
+        const imageUpload = await fetch(
+          `https://api.imgbb.com/1/upload?key=${process.env.NEXT_PUBLIC_IMAGEBB_API_KEY}`,
+          {
+            method: "POST",
+            body: imageData,
+          }
+        );
+
+        const imageResult = await imageUpload.json();
+
+        if (!imageResult.success) {
+          toast.error("Image upload failed!");
+          return;
+        }
+
+        // নতুন: ImageBB থেকে hosted image URL নেওয়া হচ্ছে
+        imageUrl = imageResult.data.url;
+      }
+
+      // পরিবর্তন: signup-এর সাথে image URL পাঠানো হচ্ছে
+      const singup = await signUp.email({
+        name: data.name,
+        email: data.email,
+        password: data.password,
+        role: data.role,
+        image: imageUrl,
+      });
+
+      if (singup?.error) {
+        toast.error(singup.error.message || "Signup failed!");
+        return;
+      }
+
+      toast.success("Sign up Successful...");
+
+      // পরিবর্তন: signup success হলে page refresh
+      window.location.reload();
+
+    } catch (error) {
+      toast.error(error.message || "Something went wrong!");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -59,10 +122,42 @@ const SignupForm = () => {
         </div>
 
         <form onSubmit={handleSignup} className="space-y-5">
+
+          {/* নতুন: Profile image upload input */}
+          <div className="flex flex-col gap-2">
+            <label
+              htmlFor="image"
+              className="text-sm font-medium text-gray-200"
+            >
+              Profile Image
+            </label>
+
+            <input
+              id="image"
+              name="image"
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+              className="w-full cursor-pointer rounded-lg border border-white/10 bg-[#27272a] p-3 text-sm text-gray-300 file:mr-4 file:rounded-lg file:border-0 file:bg-violet-600 file:px-4 file:py-2 file:text-white"
+            />
+          </div>
+
+          {/* নতুন: selected image preview */}
+          {preview && (
+            <div className="flex justify-center">
+              <img
+                src={preview}
+                alt="Profile Preview"
+                className="h-24 w-24 rounded-full border-2 border-violet-500 object-cover"
+              />
+            </div>
+          )}
+
           <div className="flex flex-col gap-2">
             <label htmlFor="name" className="text-sm font-medium text-gray-200">
               Name
             </label>
+
             <Input
               id="name"
               name="name"
@@ -80,6 +175,7 @@ const SignupForm = () => {
             >
               Email Address
             </label>
+
             <Input
               id="email"
               name="email"
@@ -98,6 +194,7 @@ const SignupForm = () => {
             >
               Password
             </label>
+
             <Input
               id="password"
               name="password"
@@ -110,7 +207,11 @@ const SignupForm = () => {
           </div>
 
           <div className="flex flex-col gap-2">
-            <RadioGroup onChange={value => setRole(value)} name="role" defaultValue="seeker">
+            <RadioGroup
+              onChange={(value) => setRole(value)}
+              name="role"
+              defaultValue="seeker"
+            >
               <Label>Select as Role.</Label>
               <Description>Select your account role</Description>
 
@@ -139,7 +240,7 @@ const SignupForm = () => {
             isDisabled={loading}
             className="w-full bg-violet-600 py-3 font-semibold text-white transition hover:bg-violet-500"
           >
-            Create Account
+            {loading ? "Creating Account..." : "Create Account"}
           </Button>
         </form>
 

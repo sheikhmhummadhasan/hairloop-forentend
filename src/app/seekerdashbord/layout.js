@@ -1,9 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   LayoutDashboard,
-  Search,
   FileText,
   CreditCard,
   Settings,
@@ -40,14 +39,45 @@ const navigation = [
 
 export default function SeekerDashboardLayout({ children }) {
   const pathname = usePathname();
+
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
 
+  // পরিবর্তন: Message এবং Notification dropdown control করার state
+  const [messageOpen, setMessageOpen] = useState(false);
+  const [notificationOpen, setNotificationOpen] = useState(false);
+
+  // পরিবর্তন: dropdown বাইরে click করলে বন্ধ করার জন্য ref
+  const messageRef = useRef(null);
+  const notificationRef = useRef(null);
+
   const isActive = (href) => pathname === href;
 
-  const {data:session, error} = useSession();
+  const { data: session, error } = useSession();
   const userName = session?.user?.name;
-  // console.log(userName)
+  const userImage = session?.user?.image;
+
+  // পরিবর্তন: dropdown-এর বাইরে click করলে dropdown বন্ধ হবে
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (messageRef.current && !messageRef.current.contains(event.target)) {
+        setMessageOpen(false);
+      }
+
+      if (
+        notificationRef.current &&
+        !notificationRef.current.contains(event.target)
+      ) {
+        setNotificationOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
     <div className="min-h-screen bg-[#0f0f11] font-sans text-gray-200">
@@ -92,8 +122,13 @@ export default function SeekerDashboardLayout({ children }) {
             <span className="md:hidden">
               <X size={20} />
             </span>
+
             <span className="hidden md:block">
-              {collapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
+              {collapsed ? (
+                <ChevronRight size={20} />
+              ) : (
+                <ChevronLeft size={20} />
+              )}
             </span>
           </button>
         </div>
@@ -103,14 +138,25 @@ export default function SeekerDashboardLayout({ children }) {
             collapsed ? "justify-center" : ""
           }`}
         >
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-indigo-600 font-bold text-white">
-            S
-          </div>
+          {/* পরিবর্তন: user-এর profile image থাকলে এখানে ব্যবহার করা যাবে */}
+          {userImage ? (
+            <img
+              src={userImage}
+              alt={userName}
+              className="h-10 w-10 shrink-0 rounded-full object-cover"
+            />
+          ) : (
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-indigo-600 font-bold text-white">
+              {userName?.charAt(0)?.toUpperCase() || "S"}
+            </div>
+          )}
+
           {!collapsed && (
             <div className="min-w-0">
-              <h4 className="text-sm font-semibold text-white">
+              <h4 className="truncate text-sm font-semibold text-white">
                 {userName}
               </h4>
+
               <p className="text-xs text-gray-400">Professional Tier</p>
             </div>
           )}
@@ -134,6 +180,7 @@ export default function SeekerDashboardLayout({ children }) {
                 } ${collapsed ? "justify-center" : ""}`}
               >
                 <Icon size={18} className="shrink-0" />
+
                 {!collapsed && <span>{name}</span>}
               </Link>
             );
@@ -158,6 +205,7 @@ export default function SeekerDashboardLayout({ children }) {
             }`}
           >
             <LogOut size={18} />
+
             {!collapsed && "Logout"}
           </button>
         </div>
@@ -179,38 +227,139 @@ export default function SeekerDashboardLayout({ children }) {
               <Menu size={20} />
             </button>
 
-            <div className="relative w-full max-w-md">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-              <input
-                type="search"
-                placeholder="Search opportunities..."
-                className="w-full rounded-full border border-gray-800 bg-gray-900 py-2 pl-9 pr-4 text-sm text-gray-200 placeholder-gray-500 outline-none focus:border-gray-600"
-              />
-            </div>
+            {/* পরিবর্তন: Search field সম্পূর্ণ remove করা হয়েছে */}
           </div>
 
           <div className="flex shrink-0 items-center gap-2 sm:gap-4">
-            <button
-              type="button"
-              aria-label="Messages"
-              className="relative rounded-lg p-2 text-gray-400 transition hover:bg-gray-800 hover:text-white"
-            >
-              <Mail size={20} />
-              <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-red-500" />
-            </button>
+            {/* পরিবর্তন: Message dropdown */}
+            <div ref={messageRef} className="relative">
+              <button
+                type="button"
+                aria-label="Messages"
+                aria-expanded={messageOpen}
+                onClick={() => {
+                  setMessageOpen(!messageOpen);
+                  setNotificationOpen(false);
+                }}
+                className={`relative rounded-lg p-2 transition ${
+                  messageOpen
+                    ? "bg-gray-800 text-white"
+                    : "text-gray-400 hover:bg-gray-800 hover:text-white"
+                }`}
+              >
+                <Mail size={20} />
 
-            <button
-              type="button"
-              aria-label="Notifications"
-              className="relative rounded-lg p-2 text-gray-400 transition hover:bg-gray-800 hover:text-white"
-            >
-              <Bell size={20} />
-              <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-green-500" />
-            </button>
+                <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-red-500" />
+              </button>
 
-            <div className="flex h-8 w-8 items-center justify-center rounded-full border border-gray-700 bg-indigo-600 text-sm font-semibold text-white">
-              S
+              {/* পরিবর্তন: Message icon-এর নিচে dropdown */}
+              {messageOpen && (
+                <div className="absolute right-0 top-12 z-50 w-[320px] overflow-hidden rounded-2xl border border-gray-800 bg-[#18181b] shadow-2xl sm:w-[360px]">
+                  <div className="flex items-center justify-between border-b border-gray-800 px-5 py-4">
+                    <h3 className="font-semibold text-white">Messages</h3>
+
+                    <span className="rounded-full bg-indigo-500/10 px-2.5 py-1 text-xs font-medium text-indigo-400">
+                      Inbox
+                    </span>
+                  </div>
+
+                  {/* পরিবর্তন: message থাকলে এখানে message দেখাবে */}
+                  <div className="flex flex-col items-center justify-center px-6 py-10 text-center">
+                    <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-gray-800">
+                      <Mail className="h-6 w-6 text-gray-400" />
+                    </div>
+
+                    <h4 className="font-semibold text-white">
+                      No messages yet
+                    </h4>
+
+                    <p className="mt-2 text-sm leading-6 text-gray-400">
+                      Your messages will appear here when you receive them.
+                    </p>
+                  </div>
+
+                  {/* পরিবর্তন: all messages দেখার link */}
+                  <Link
+                    href="/seekerdashbord/messages"
+                    onClick={() => setMessageOpen(false)}
+                    className="block border-t border-gray-800 px-5 py-3 text-center text-sm font-medium text-indigo-400 transition hover:bg-white/5"
+                  >
+                    View All Messages
+                  </Link>
+                </div>
+              )}
             </div>
+
+            {/* পরিবর্তন: Notification dropdown */}
+            <div ref={notificationRef} className="relative">
+              <button
+                type="button"
+                aria-label="Notifications"
+                aria-expanded={notificationOpen}
+                onClick={() => {
+                  setNotificationOpen(!notificationOpen);
+                  setMessageOpen(false);
+                }}
+                className={`relative rounded-lg p-2 transition ${
+                  notificationOpen
+                    ? "bg-gray-800 text-white"
+                    : "text-gray-400 hover:bg-gray-800 hover:text-white"
+                }`}
+              >
+                <Bell size={20} />
+
+                <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-green-500" />
+              </button>
+
+              {/* পরিবর্তন: Notification icon-এর নিচে dropdown */}
+              {notificationOpen && (
+                <div className="absolute right-0 top-12 z-50 w-[320px] overflow-hidden rounded-2xl border border-gray-800 bg-[#18181b] shadow-2xl sm:w-[360px]">
+                  <div className="flex items-center justify-between border-b border-gray-800 px-5 py-4">
+                    <h3 className="font-semibold text-white">Notifications</h3>
+
+                    <span className="rounded-full bg-green-500/10 px-2.5 py-1 text-xs font-medium text-green-400">
+                      Updates
+                    </span>
+                  </div>
+
+                  {/* পরিবর্তন: notification থাকলে এখানে notification দেখাবে */}
+                  <div className="flex flex-col items-center justify-center px-6 py-10 text-center">
+                    <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-gray-800">
+                      <Bell className="h-6 w-6 text-gray-400" />
+                    </div>
+
+                    <h4 className="font-semibold text-white">
+                      Youre all caught up
+                    </h4>
+
+                    <p className="mt-2 text-sm leading-6 text-gray-400">
+                      Your notifications and important updates will appear here.
+                    </p>
+                  </div>
+
+                  {/* পরিবর্তন: all notifications দেখার link */}
+                  <Link
+                    href="/seekerdashbord/notifications"
+                    onClick={() => setNotificationOpen(false)}
+                    className="block border-t border-gray-800 px-5 py-3 text-center text-sm font-medium text-indigo-400 transition hover:bg-white/5"
+                  >
+                    View All Notifications
+                  </Link>
+                </div>
+              )}
+            </div>
+
+            {userImage ? (
+              <img
+                src={userImage}
+                alt={userName}
+                className="h-10 w-10 shrink-0 rounded-full object-cover"
+              />
+            ) : (
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-indigo-600 font-bold text-white">
+                {userName?.charAt(0)?.toUpperCase() || "S"}
+              </div>
+            )}
           </div>
         </header>
 

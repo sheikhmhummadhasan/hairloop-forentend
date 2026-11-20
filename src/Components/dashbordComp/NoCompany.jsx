@@ -60,20 +60,56 @@ const NoCompany = () => {
   console.log(session?.user?.id)
   const createdUser = session?.user?.id
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const formData = new FormData(e.target);
-    const date = new Date();
-    formData.append("cratedAT", date.toISOString());
-    formData.append("createdBY", createdUser)
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    const data = Object.fromEntries(formData.entries());
+  const formData = new FormData(e.target);
+  const date = new Date();
+
+  formData.append("cratedAT", date.toISOString());
+  formData.append("createdBY", createdUser);
+
+  const data = Object.fromEntries(formData.entries());
+
+  try {
+    let logoUrl = "";
+
+    // ImageBB image upload
+    if (logo) {
+      const imageData = new FormData();
+      imageData.append("image", logo);
+
+      const imageUpload = await fetch(
+        `https://api.imgbb.com/1/upload?key=${process.env.NEXT_PUBLIC_IMAGEBB_API_KEY}`,
+        {
+          method: "POST",
+          body: imageData,
+        }
+      );
+
+      const imageResult = await imageUpload.json();
+
+      if (!imageResult.success) {
+        alert("Company logo upload failed!");
+        return;
+      }
+
+      logoUrl = imageResult.data.url;
+    }
+
+    // Company data-তে image URL যোগ করা
+    data.logo = logoUrl;
 
     const res = await postCompanyData(data);
+
     if (res?.insertedId || res?.acknowledged) {
       router.push("/dashbord");
     }
-  };
+  } catch (error) {
+    console.error(error);
+    alert("Something went wrong!");
+  }
+};
 
   return (
     <div className="relative flex min-h-[calc(100vh-132px)] flex-col items-center justify-center px-4 py-10">

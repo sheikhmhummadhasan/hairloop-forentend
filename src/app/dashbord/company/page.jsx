@@ -12,6 +12,7 @@ const Company = async () => {
   });
   const id = session?.user?.id
   const company = await getCompanyById(id);
+  console.log(company)
 
   return (
     <div>

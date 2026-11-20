@@ -1,11 +1,10 @@
-
 "use client";
 
 import { useState } from "react";
 import { Button, Input } from "@heroui/react";
 import { FcGoogle } from "react-icons/fc";
 import { toast } from "react-toastify";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { createAuthClient } from "better-auth/client";
 
 const authClient = createAuthClient();
@@ -13,7 +12,10 @@ const authClient = createAuthClient();
 const SigninForm = () => {
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get('redirect') || '/';
   const router = useRouter();
+
 
   const handleSignin = async (e) => {
     e.preventDefault();
@@ -34,7 +36,7 @@ const SigninForm = () => {
       }
 
       toast.success("Login successful!");
-      router.push("/");
+      router.push(redirectTo);
     } catch (error) {
       toast.error(error.message || "Something went wrong!");
       console.log(error);

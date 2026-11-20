@@ -12,7 +12,7 @@ const ApplicantCard = ({ applicant, role }) => {
         const data = await updateApplicationStatus(applicant._id, status);
         router.refresh()
       }else{
-        toast.error('you can not modefi secend time')
+        toast.error(`You alredy ${applicant.status} him/her`)
       }
     };
 

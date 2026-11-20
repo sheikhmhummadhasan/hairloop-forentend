@@ -1,4 +1,4 @@
-export const instant = false
+export const instant = false;
 import CtaSection from "@/Components/CtaSection";
 import FeaturesSection from "@/Components/FeaturesSection";
 import Hero from "@/Components/Hero";
@@ -7,16 +7,12 @@ import PricingSection from "@/Components/PricingSection";
 import { getRole } from "@/lib/mechine";
 import { Suspense } from "react";
 
-const JobsSection = async () => {
+const Home = async () => {
   const jobs = await getRole();
-  return <Jobs jobs={jobs} />;
-};
-
-const Home = () => {
   return (
     <>
       <Hero />
-      <JobsSection />
+      <Jobs jobs={jobs} />
       <FeaturesSection />
       <PricingSection />
       <CtaSection />

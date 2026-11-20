@@ -14,7 +14,15 @@ import {
 } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
-import { getApplicationData, getApplicationDataByUserID, getapplicationPendingData, getApplicationRejectionDataByUserID, getApplicationSelectionDataByUserID, getOfferd, getRejection } from "@/lib/mechine";
+import {
+  getApplicationData,
+  getApplicationDataByUserID,
+  getapplicationPendingData,
+  getApplicationRejectionDataByUserID,
+  getApplicationSelectionDataByUserID,
+  getOfferd,
+  getRejection,
+} from "@/lib/mechine";
 
 export default async function SeekerDashboardPage() {
   const session = await auth.api.getSession({
@@ -23,13 +31,14 @@ export default async function SeekerDashboardPage() {
   const userName = session?.user?.name;
   const userEmail = session?.user?.email;
   const userID = session?.user?.id;
+  const userImage = session?.user?.image;
   // console.log(userName, userEmail);
 
   const res = await getApplicationData();
   const resById = await getApplicationDataByUserID(userID);
   const resForRejection = await getApplicationRejectionDataByUserID(userID);
   const getOffer = await getOfferd(userID);
-  const getPending = await getapplicationPendingData(userID)
+  const getPending = await getapplicationPendingData(userID);
   // console.log(getOffer)
 
   // console.log(resById);
@@ -37,13 +46,14 @@ export default async function SeekerDashboardPage() {
     <div className="space-y-8 max-w-7xl mx-auto">
       {/* Top Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-
         <div className="bg-[#16161a] border border-gray-800 rounded-xl p-5 flex items-start justify-between">
           <div>
             <p className="text-xs font-medium text-gray-400">
               Applications Submitted
             </p>
-            <h2 className="text-3xl font-bold text-white mt-2">{resById.length}</h2>
+            <h2 className="text-3xl font-bold text-white mt-2">
+              {resById.length}
+            </h2>
           </div>
           <div className="p-2 bg-gray-800/60 rounded-lg text-gray-300">
             <Send className="w-5 h-5" />
@@ -62,10 +72,12 @@ export default async function SeekerDashboardPage() {
           </div>
         </div>
 
-        <div className="bg-[#16161a] border border-gray-800 rounded-xl p-5 flex items-start justify-between"> 
+        <div className="bg-[#16161a] border border-gray-800 rounded-xl p-5 flex items-start justify-between">
           <div>
             <p className="text-xs font-medium text-gray-400">Rejected</p>
-            <h2 className="text-3xl font-bold text-white mt-2">{resForRejection.length}</h2>
+            <h2 className="text-3xl font-bold text-white mt-2">
+              {resForRejection.length}
+            </h2>
           </div>
           <div className="p-2 bg-gray-800/60 rounded-lg text-red-500">
             <X className="w-5 h-5" />
@@ -75,7 +87,9 @@ export default async function SeekerDashboardPage() {
         <div className="bg-[#16161a] border border-gray-800 rounded-xl p-5 flex items-start justify-between">
           <div>
             <p className="text-xs font-medium text-gray-400">Offers Received</p>
-            <h2 className="text-3xl font-bold text-white mt-2">{getOffer.length}</h2>
+            <h2 className="text-3xl font-bold text-white mt-2">
+              {getOffer.length}
+            </h2>
           </div>
           <div className="p-2 bg-gray-800/60 rounded-lg text-emerald-500">
             <Award className="w-5 h-5" />
@@ -87,8 +101,16 @@ export default async function SeekerDashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* User Profile Card */}
         <div className="lg:col-span-5 bg-[#16161a] border border-gray-800 rounded-xl p-6 flex flex-col items-center justify-center text-center">
-          <div className="w-20 h-20 rounded-full bg-gray-800 border border-gray-700 flex items-center justify-center mb-4 text-gray-400">
-            <User className="w-10 h-10" />
+          <div className="w-20 h-20 rounded-full bg-gray-800 border border-gray-700 flex items-center justify-center mb-4 text-gray-400 overflow-hidden">
+            {userImage ? (
+              <img
+                src={userImage}
+                alt={userName}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <User className="w-10 h-10" />
+            )}
           </div>
           <h3 className="text-xl font-bold text-white">{userName}</h3>
           <p className="text-sm text-gray-400 mt-1">{userEmail}</p>
@@ -149,12 +171,14 @@ export default async function SeekerDashboardPage() {
             <div>
               <div className="flex justify-between text-xs mb-1">
                 <span className="text-gray-400">Rejected</span>
-                <span className="text-white font-medium">{resForRejection.length}</span>
+                <span className="text-white font-medium">
+                  {resForRejection.length}
+                </span>
               </div>
               <div className="w-full h-1.5 bg-gray-800 rounded-full overflow-hidden">
                 <div
                   className="h-full bg-red-500 rounded-full"
-                  style={{ width: `${resForRejection.length*2}%` }}
+                  style={{ width: `${resForRejection.length * 2}%` }}
                 ></div>
               </div>
             </div>
@@ -163,12 +187,14 @@ export default async function SeekerDashboardPage() {
             <div>
               <div className="flex justify-between text-xs mb-1">
                 <span className="text-gray-400">Offered</span>
-                <span className="text-white font-medium">{getOfferd.length}</span>
+                <span className="text-white font-medium">
+                  {getOfferd.length}
+                </span>
               </div>
               <div className="w-full h-1.5 bg-gray-800 rounded-full overflow-hidden">
                 <div
                   className="h-full bg-emerald-500 rounded-full"
-                  style={{ width: `${getOffer.length*2}%` }}
+                  style={{ width: `${getOffer.length * 2}%` }}
                 ></div>
               </div>
             </div>

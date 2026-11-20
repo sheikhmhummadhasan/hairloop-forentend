@@ -23,7 +23,12 @@ const ApplicationDashbord = async () => {
 
   
   return <div>
-    <MyApplications getPending={getPending} getOffer={getOffer} resForRejection={resForRejection} resById={resById} />
+    <MyApplications 
+    getPending={getPending} 
+    getOffer={getOffer} 
+    resForRejection={resForRejection} 
+    resById={resById} 
+    />
   </div>;
 };
 

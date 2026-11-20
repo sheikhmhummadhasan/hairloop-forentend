@@ -4,6 +4,7 @@ import {
   activeJobs,
   closedJobs,
   getApplicationMyCompany,
+  getCompany,
   getRoleByCreatorID,
   getRoleByUserID,
 } from "@/lib/mechine";
@@ -16,6 +17,7 @@ import {
   ArrowUpRight,
 } from "lucide-react";
 import { headers } from "next/headers";
+import Image from "next/image";
 import Link from "next/link";
 
 const statusStyles = {
@@ -34,11 +36,7 @@ const DashboardPage = async () => {
   const resPonce = await closedJobs(id);
   const activeJob = await activeJobs(id);
   const applicnt = await getApplicationMyCompany(id);
-
-  console.log(applicnt.length);
-
-  console.log(applicnt.length);
-
+  const company = await getCompany();
   const stats = [
     {
       title: "Total Job Posts",
@@ -66,66 +64,7 @@ const DashboardPage = async () => {
     },
   ];
 
-  const applications = [
-    {
-      name: "Julianne Moore",
-      role: "Senior Product Designer",
-      date: "Oct 24, 2026",
-      experience: "6 years",
-      status: "Interviewing",
-    },
-    {
-      name: "Robert Downey",
-      role: "Backend Engineer",
-      date: "Oct 23, 2026",
-      experience: "4 years",
-      status: "New",
-    },
-    {
-      name: "Emma Stone",
-      role: "Marketing Lead",
-      date: "Oct 22, 2026",
-      experience: "8 years",
-      status: "Reviewing",
-    },
-    {
-      name: "Chris Pratt",
-      role: "Product Manager",
-      date: "Oct 21, 2026",
-      experience: "5 years",
-      status: "Rejected",
-    },
-  ];
-
-  const companies = [
-    {
-      name: "Google Inc.",
-      description: "Technology · Mountain View",
-      jobs: 24,
-      icon: "G",
-    },
-    {
-      name: "Meta Platforms",
-      description: "Social Media · Menlo Park",
-      jobs: 18,
-      icon: "M",
-    },
-    {
-      name: "Stripe",
-      description: "Fintech · San Francisco",
-      jobs: 12,
-      icon: "S",
-    },
-    {
-      name: "Tesla",
-      description: "Automotive · Austin",
-      jobs: 31,
-      icon: "T",
-    },
-  ];
-
   const userName = session?.user?.name;
-  // console.log(session?.user?.name)
   return (
     <div className="space-y-8">
       <section>
@@ -247,19 +186,31 @@ const DashboardPage = async () => {
 
           <div className="rounded-lg border border-[#303030] bg-[#1b1b1b] p-3">
             <div className="space-y-1">
-              {companies.map((company) => (
+              {company.map((company) => (
                 <div
-                  key={company.name}
+                  key={company._id || company.name}
                   className="flex items-center gap-3 rounded-md p-3 transition hover:bg-[#252525]"
                 >
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md border border-[#414141] bg-[#303030] text-sm font-bold text-gray-200">
-                    {company.icon}
-                  </div>
+                  {company.logo ? (
+                    <Image
+                      src={company.logo}
+                      alt={company.name || "Company"}
+                      width={40}
+                      height={40}
+                      unoptimized
+                      className="h-10 w-10 rounded-full border border-white/20 object-cover"
+                    />
+                  ) : (
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#5c53fe] font-semibold text-white">
+                      {company.name?.charAt(0)?.toUpperCase() || "U"}
+                    </div>
+                  )}
 
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-xs font-semibold text-gray-100">
                       {company.name}
                     </p>
+
                     <p className="mt-1 truncate text-[10px] text-gray-500">
                       {company.description}
                     </p>

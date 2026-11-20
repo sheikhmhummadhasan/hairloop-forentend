@@ -22,9 +22,10 @@ const navigation = [
 export function SidebarContent({ setMenuOpen }) {
   const pathname = usePathname();
 
-   const { data: session, isPending } = useSession();
+  const { data: session, isPending } = useSession();
   //  console.log(session?.user)
-   const userName = session?.user?.name
+  const userName = session?.user?.name;
+  const userImage = session?.user?.image;
 
   const isActive = (href) => {
     if (href === "/dashbord") return pathname === href;
@@ -46,9 +47,17 @@ export function SidebarContent({ setMenuOpen }) {
         {/* User Profile Header */}
         <div className="border-b border-[#292929] px-4 py-5">
           <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-sky-400 to-indigo-600 text-xs font-bold text-white">
-              AS
-            </div>
+            {userImage ? (
+              <img
+                src={userImage}
+                alt={userName}
+                className="h-10 w-10 shrink-0 rounded-full object-cover"
+              />
+            ) : (
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-indigo-600 font-bold text-white">
+                {userName?.charAt(0)?.toUpperCase() || "S"}
+              </div>
+            )}
             <div>
               <p className="text-xs font-semibold text-white">{userName}</p>
               <p className="text-[10px] text-gray-500">Recruiter</p>

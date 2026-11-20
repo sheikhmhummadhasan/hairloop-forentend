@@ -13,7 +13,6 @@ import { useRouter } from "next/navigation";
 import React from "react";
 
 const SavedJobs = ({ SavedJob }) => {
-
   const router = useRouter();
 
   const handeldelete = async (id) => {
@@ -24,43 +23,9 @@ const SavedJobs = ({ SavedJob }) => {
   };
   return (
     <div>
-      <div className="">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5 mb-8">
-          <div className="space-y-2">
-            <div className="flex items-center gap-2">
-              <span className="w-1 h-8 rounded-full bg-orange-400"></span>
-              <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white">
-                Saved Jobs
-              </h1>
-            </div>
-
-            <p className="text-sm sm:text-base text-[#a7a5a4] pl-3">
-              Manage and track your bookmarked opportunities.
-            </p>
-          </div>
-
-          <div className="flex items-center gap-4 p-4 sm:px-6 rounded-2xl bg-gradient-to-br from-[#252525] to-[#181818] border border-white/10 shadow-lg shadow-black/20 w-full sm:w-auto">
-            <div className="w-12 h-12 rounded-xl bg-orange-400/10 border border-orange-400/20 flex items-center justify-center shrink-0">
-              <Bookmark className="w-6 h-6 text-orange-300 fill-orange-300/20" />
-            </div>
-
-            <div>
-              <p className="text-xs sm:text-sm font-medium text-[#aaa8a6] uppercase tracking-wider">
-                Total Saved
-              </p>
-
-              <h1 className="text-2xl sm:text-3xl font-black text-white tabular-nums">
-                {SavedJob.length}
-              </h1>
-            </div>
-
-            <div className="ml-auto sm:ml-4 w-10 h-10 rounded-full border border-orange-400/20 flex items-center justify-center">
-              <span className="text-orange-300 text-sm font-bold">+</span>
-            </div>
-          </div>
-        </div>
-
-        {SavedJob?.map((e) => {
+      {/* পরিবর্তন: SavedJob থাকলে jobs দেখাবে, না থাকলে empty state দেখাবে */}
+      {SavedJob?.length > 0 ? (
+        SavedJob.map((e) => {
           const {
             companyName,
             experience,
@@ -135,7 +100,6 @@ const SavedJobs = ({ SavedJob }) => {
 
                   <button
                     onClick={() => handeldelete(_id)}
-                    // disabled={loadingId === _id}
                     title="Remove saved job"
                     className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#353535] text-gray-400 transition hover:border-red-500/40 hover:bg-red-500/10 hover:text-red-400 disabled:opacity-50"
                   >
@@ -152,8 +116,31 @@ const SavedJobs = ({ SavedJob }) => {
               </div>
             </div>
           );
-        })}
-      </div>
+        })
+      ) : (
+        // পরিবর্তন: কোনো saved job না থাকলে এই box দেখাবে
+        <div className="mt-6 flex min-h-[300px] flex-col items-center justify-center rounded-2xl border border-dashed border-[#353535] bg-[#1e1e1e] px-6 py-12 text-center">
+          <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl border border-orange-400/20 bg-orange-400/10">
+            <Bookmark className="h-8 w-8 text-orange-300" />
+          </div>
+
+          <h2 className="text-xl font-bold text-white">
+            No Saved Jobs Available
+          </h2>
+
+          <p className="mt-2 max-w-sm text-sm leading-6 text-gray-400">
+            You haven't saved any jobs yet. Browse available jobs and bookmark
+            the opportunities you're interested in.
+          </p>
+
+          <Link
+            href="/browse"
+            className="mt-6 rounded-xl bg-orange-400 px-6 py-3 text-sm font-semibold text-black transition hover:bg-orange-300"
+          >
+            Browse Jobs
+          </Link>
+        </div>
+      )}
     </div>
   );
 };
