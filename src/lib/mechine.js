@@ -288,3 +288,4 @@ export const getHistyoyById = async(id) =>{
   const res = await prom.json();
   return res;
 }
+
