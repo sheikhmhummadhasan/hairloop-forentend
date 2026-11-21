@@ -66,24 +66,24 @@ const BrowseDetailPageClient = ({ res, savedJobs }) => {
     createdBY,
     saved,
     thisJobId,
-    usersID
-  }
+    usersID,
+  };
 
   // console.log(save)
   const handelSaved = async () => {
-    if(userRole === 'recruiter'){
-      toast.error('This Fecturd only for Jobseeker!')
-      return
+    if (userRole === "recruiter") {
+      toast.error("This Fecturd only for Jobseeker!");
+      return;
     }
-    const result = await savedJobsOpration(save)
-    if (result.modifiedCount > 0 ) {
+    const result = await savedJobsOpration(save);
+    if (result.modifiedCount > 0) {
       setIsBookmarked(!isBookmarked);
     }
-    console.log(result)
+    console.log(result);
   };
   const handleApply = async (e) => {
     e.preventDefault();
-    if (!userData && userRole === 'recruiter') {
+    if (!userData && userRole === "recruiter") {
       toast.error("Please login first as jobseeker!");
       return;
     }

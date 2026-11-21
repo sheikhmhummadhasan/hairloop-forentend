@@ -1,4 +1,17 @@
 import { toast } from "react-toastify";
+import { getUserToken } from "./token";
+
+// get token
+export const authHeader = async () => {
+  const token = await getUserToken();
+  const header = token
+    ? {
+        authorization: `Bearer ${token}`,
+      }
+    : {};
+
+  return header;
+};
 
 // GET ALL ROLE API
 export const getRole = async () => {
@@ -29,6 +42,9 @@ export const getRoleByUserID = async (id) => {
 export const getRolebyUserIdAndDelete = async (id) => {
   const prom = await fetch(`http://localhost:5000/role_data/${id}`, {
     method: "DELETE",
+    headers: {
+      ...(await authHeader()),
+    },
   });
   const res = await prom.json();
   if (!res) {
@@ -225,37 +241,36 @@ export const getSavedJobs = async (id) => {
 };
 
 // opration save jobs false to true
-export const savedJobsOpration = async(data)=>{
-   const prom = await fetch(`http://localhost:5000/getsavedjobs`,{
-    method:'POST',
-    headers:{
-      'content-type': 'application/json'
+export const savedJobsOpration = async (data) => {
+  const prom = await fetch(`http://localhost:5000/getsavedjobs`, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
     },
-    body:JSON.stringify(data)
-   });
+    body: JSON.stringify(data),
+  });
   const res = await prom.json();
-  if(!res){
-    toast.error('somthings went to wrong!')
-  }else{
-    toast.success('Saved This jobs Successfully')
+  if (!res) {
+    toast.error("somthings went to wrong!");
+  } else {
+    toast.success("Saved This jobs Successfully");
   }
   return res;
-}
+};
 
 // delete saved
-export const deleteSave = async(id) => {
-  const prom = await fetch(`http://localhost:5000/getsavedjobs/${id}`,{
-    method:"DELETE"
-  })
+export const deleteSave = async (id) => {
+  const prom = await fetch(`http://localhost:5000/getsavedjobs/${id}`, {
+    method: "DELETE",
+  });
   const res = await prom.json();
-  if(!res){
-    toast.error('somthings went to wrong!')
-  }else{
-    toast.success('Saved This jobs Delete Successfully')
+  if (!res) {
+    toast.error("somthings went to wrong!");
+  } else {
+    toast.success("Saved This jobs Delete Successfully");
   }
-  return res
-}
-
+  return res;
+};
 
 // post paymet hsitory
 export const paymentHistory = async (data) => {
@@ -277,15 +292,15 @@ export const paymentHistory = async (data) => {
   return res;
 };
 
-// get payment history by 
-export const getHistyoyById = async(id) =>{
+// get payment history by
+export const getHistyoyById = async (id) => {
   const prom = await fetch(`http://localhost:5000/paymentHistory/${id}`);
-    if (!prom.ok) {
+  if (!prom.ok) {
     const errorText = await prom.text();
     console.log("API Error:", prom.status, errorText);
     return null;
   }
   const res = await prom.json();
   return res;
-}
+};
 

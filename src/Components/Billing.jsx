@@ -67,7 +67,7 @@ const Billing = ({ history = [] }) => {
               </div>
               <div className="text-left sm:text-right">
                 <span className="text-3xl font-extrabold text-white">
-                  ${latest.amount ?? 29}
+                  ${latest.amount ?? 0}
                 </span>
                 <span className="text-xs text-gray-400 font-medium">/mo</span>
                 <p className="text-[11px] text-gray-500 mt-0.5">

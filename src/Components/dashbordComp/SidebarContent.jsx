@@ -8,6 +8,7 @@ import {
   BriefcaseBusiness,
   Users,
   Settings,
+  CreditCard,
 } from "lucide-react";
 import { authClient, useSession } from "@/lib/auth-client";
 
@@ -17,6 +18,7 @@ const navigation = [
   { name: "Manage Jobs", href: "/dashbord/jobs", icon: BriefcaseBusiness },
   { name: "Applications", href: "/dashbord/applications", icon: Users },
   { name: "Settings", href: "/dashbord/settings", icon: Settings },
+  { name: "Billing", href: "/dashbord/recruterBilling", icon: CreditCard },
 ];
 
 export function SidebarContent({ setMenuOpen }) {
