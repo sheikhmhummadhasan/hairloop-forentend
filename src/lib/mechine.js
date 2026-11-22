@@ -1,3 +1,4 @@
+
 import { toast } from "react-toastify";
 import { getUserToken } from "./token";
 
@@ -15,7 +16,7 @@ export const authHeader = async () => {
 
 // GET ALL ROLE API
 export const getRole = async () => {
-  const prom = await fetch("http://localhost:5000/role", {
+  const prom = await fetch(`${process.env.NEXT_PUBLIC_SURVER_URI}/role`, {
     cache: "no-store",
   });
   const res = await prom.json();
@@ -24,8 +25,11 @@ export const getRole = async () => {
 
 // GET SINGEL ROLE BY ID API
 export const getRoleById = async (id) => {
-  const prom = await fetch(`http://localhost:5000/role/${id}`, {
+  const prom = await fetch(`${process.env.NEXT_PUBLIC_SURVER_URI}/role/${id}`, {
     cache: "no-store",
+    headers: {
+      ...(await authHeader()),
+    },
   });
   const res = await prom.json();
   return res;
@@ -33,19 +37,29 @@ export const getRoleById = async (id) => {
 
 // GET ROLE BY USERid
 export const getRoleByUserID = async (id) => {
-  const prom = await fetch(`http://localhost:5000/role_data/${id}`);
+  const prom = await fetch(
+    `${process.env.NEXT_PUBLIC_SURVER_URI}/role_data/${id}`,
+    {
+      headers: {
+        ...(await authHeader()),
+      },
+    },
+  );
   const res = await prom.json();
   return res;
 };
 
 // get role by user id and DELETE
 export const getRolebyUserIdAndDelete = async (id) => {
-  const prom = await fetch(`http://localhost:5000/role_data/${id}`, {
-    method: "DELETE",
-    headers: {
-      ...(await authHeader()),
+  const prom = await fetch(
+    `${process.env.NEXT_PUBLIC_SURVER_URI}/role_data/${id}`,
+    {
+      method: "DELETE",
+      headers: {
+        ...(await authHeader()),
+      },
     },
-  });
+  );
   const res = await prom.json();
   if (!res) {
     toast.error("pls try agein later");
@@ -57,13 +71,17 @@ export const getRolebyUserIdAndDelete = async (id) => {
 
 // update rolde job post
 export const updatejobsClosed = async (id) => {
-  const prom = await fetch(`http://localhost:5000/role_data/${id}`, {
-    method: "PATCH",
-    headers: {
-      "content-type": "application-json",
+  const prom = await fetch(
+    `${process.env.NEXT_PUBLIC_SURVER_URI}/role_data/${id}`,
+    {
+      method: "PATCH",
+      headers: {
+        "content-type": "application-json",
+        ...(await authHeader()),
+      },
+      body: JSON.stringify({}),
     },
-    body: JSON.stringify({}),
-  });
+  );
   const res = await prom.json();
   if (!res) {
     toast.error("pls try agein later");
@@ -73,24 +91,39 @@ export const updatejobsClosed = async (id) => {
 
 // get closed jobs api
 export const closedJobs = async (id) => {
-  const prom = await fetch(`http://localhost:5000/role_veryfy/${id}`);
+  const prom = await fetch(
+    `${process.env.NEXT_PUBLIC_SURVER_URI}/role_veryfy/${id}`,
+    {
+      headers: {
+        ...(await authHeader()),
+      },
+    },
+  );
   const res = await prom.json();
   return res;
 };
 
 // get active jobs api
 export const activeJobs = async (id) => {
-  const prom = await fetch(`http://localhost:5000/role_veryfying/${id}`);
+  const prom = await fetch(
+    `${process.env.NEXT_PUBLIC_SURVER_URI}/role_veryfying/${id}`,
+    {
+      headers: {
+        ...(await authHeader()),
+      },
+    },
+  );
   const res = await prom.json();
   return res;
 };
 
 // POST JOBS MECHINGS API
 export const postjobs = async (data) => {
-  const prom = await fetch(`http://localhost:5000/role`, {
+  const prom = await fetch(`${process.env.NEXT_PUBLIC_SURVER_URI}/role`, {
     method: "POST",
     headers: {
       "content-type": "application/json",
+      ...(await authHeader()),
     },
     body: JSON.stringify(data),
   });
@@ -100,14 +133,16 @@ export const postjobs = async (data) => {
   } else {
     toast.error("Somthin went to wrong!");
   }
-  console.log(res);
   return res;
 };
 
 // DELETE JOBS API
 export const deleteJos = async (id) => {
-  const prom = await fetch(`http://localhost:5000/role/${id}`, {
+  const prom = await fetch(`${process.env.NEXT_PUBLIC_SURVER_URI}/role/${id}`, {
     method: "delete",
+    headers: {
+      ...(await authHeader()),
+    },
   });
   const res = await prom.json();
   if (res) {
@@ -115,28 +150,39 @@ export const deleteJos = async (id) => {
   } else {
     toast.error("Somthin went to wrong!");
   }
-  console.log(res);
   return res;
 };
 
 // GET COMPANY DATA API
 export const getCompanyById = async (id) => {
-  const prom = await fetch(`http://localhost:5000/company/${id}`);
+  const prom = await fetch(
+    `${process.env.NEXT_PUBLIC_SURVER_URI}/company/${id}`,
+    {
+      headers: {
+        ...(await authHeader()),
+      },
+    },
+  );
   const res = await prom.json();
   return res;
 };
 // GET COMPANY DATA  API
 export const getCompany = async () => {
-  const prom = await fetch(`http://localhost:5000/company`);
+  const prom = await fetch(`${process.env.NEXT_PUBLIC_SURVER_URI}/company`, {
+    headers: {
+      ...(await authHeader()),
+    },
+  });
   const res = await prom.json();
   return res;
 };
 // POST COMPANY DATA API
 export const postCompanyData = async (data) => {
-  const prom = await fetch(`http://localhost:5000/company`, {
+  const prom = await fetch(`${process.env.NEXT_PUBLIC_SURVER_URI}/company`, {
     method: "POST",
     headers: {
       "content-type": "application/json",
+      ...(await authHeader()),
     },
     body: JSON.stringify(data),
   });
@@ -146,19 +192,22 @@ export const postCompanyData = async (data) => {
   } else {
     toast.error("Somthin went to wrong!");
   }
-  console.log(res);
   return res;
 };
 
 // application for a job
 export const applicationForJob = async (data) => {
-  const prom = await fetch(`http://localhost:5000/applications`, {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
+  const prom = await fetch(
+    `${process.env.NEXT_PUBLIC_SURVER_URI}/applications`,
+    {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        ...(await authHeader()),
+      },
+      body: JSON.stringify(data),
     },
-    body: JSON.stringify(data),
-  });
+  );
   const res = await prom.json();
   if (!res) {
     toast.error("try agin later");
@@ -170,7 +219,14 @@ export const applicationForJob = async (data) => {
 
 // application data get
 export const getApplicationData = async () => {
-  const prom = await fetch(`http://localhost:5000/applications`);
+  const prom = await fetch(
+    `${process.env.NEXT_PUBLIC_SURVER_URI}/applications`,
+    {
+      headers: {
+        ...(await authHeader()),
+      },
+    },
+  );
   const res = await prom.json();
   return res;
 };
@@ -178,7 +234,12 @@ export const getApplicationData = async () => {
 // appliction data get by creadet id
 export const getApplicationDataByUserID = async (id) => {
   const prom = await fetch(
-    `http://localhost:5000/applications_get_by_appliID/${id}`,
+    `${process.env.NEXT_PUBLIC_SURVER_URI}/applications_get_by_appliID/${id}`,
+    {
+      headers: {
+        ...(await authHeader()),
+      },
+    },
   );
   const res = await prom.json();
   return res;
@@ -186,7 +247,12 @@ export const getApplicationDataByUserID = async (id) => {
 // appliction rejection data get by creadet id
 export const getApplicationRejectionDataByUserID = async (id) => {
   const prom = await fetch(
-    `http://localhost:5000/applications_rejection/${id}`,
+    `${process.env.NEXT_PUBLIC_SURVER_URI}/applications_rejection/${id}`,
+    {
+      headers: {
+        ...(await authHeader()),
+      },
+    },
   );
   const res = await prom.json();
   return res;
@@ -194,61 +260,102 @@ export const getApplicationRejectionDataByUserID = async (id) => {
 
 // appliction got with mycompany id
 export const getApplicationMyCompany = async (id) => {
-  const prom = await fetch(`http://localhost:5000/applications_jobid/${id}`);
+  const prom = await fetch(
+    `${process.env.NEXT_PUBLIC_SURVER_URI}/applications_jobid/${id}`,
+    {
+      headers: {
+        ...(await authHeader()),
+      },
+    },
+  );
   const res = await prom.json();
   return res;
 };
 
 // update status of haired and rejection
 export const updateApplicationStatus = async (id, status) => {
-  console.log(id, status);
-  const prom = await fetch(`http://localhost:5000/application_status/${id}`, {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
+  const prom = await fetch(
+    `${process.env.NEXT_PUBLIC_SURVER_URI}/application_status/${id}`,
+    {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        ...(await authHeader()),
+      },
+      body: JSON.stringify({ status }),
     },
-    body: JSON.stringify({ status }),
-  });
+  );
   const res = await prom.json();
-  console.log(res);
   return await res;
 };
 
 // rejection data for seeker
 export const getRejection = async (id) => {
-  const prom = await fetch(`http://localhost:5000/application_rejected/${id}`);
+  const prom = await fetch(
+    `${process.env.NEXT_PUBLIC_SURVER_URI}/application_rejected/${id}`,
+    {
+      headers: {
+        ...(await authHeader()),
+      },
+    },
+  );
   const res = await prom.json();
   return res;
 };
 // offer data for seeker
 export const getOfferd = async (id) => {
-  const prom = await fetch(`http://localhost:5000/application_offerd/${id}`);
+  const prom = await fetch(
+    `${process.env.NEXT_PUBLIC_SURVER_URI}/application_offerd/${id}`,
+    {
+      headers: {
+        ...(await authHeader()),
+      },
+    },
+  );
   const res = await prom.json();
   return res;
 };
 // get application pending data;
 export const getapplicationPendingData = async (id) => {
-  const prom = await fetch(`http://localhost:5000/applications_pending/${id}`);
+  const prom = await fetch(
+    `${process.env.NEXT_PUBLIC_SURVER_URI}/applications_pending/${id}`,
+    {
+      headers: {
+        ...(await authHeader()),
+      },
+    },
+  );
   const res = await prom.json();
   return res;
 };
 
 // get saved jobs
 export const getSavedJobs = async (id) => {
-  const prom = await fetch(`http://localhost:5000/getsavedjobs/${id}`);
+  const prom = await fetch(
+    `${process.env.NEXT_PUBLIC_SURVER_URI}/getsavedjobs/${id}`,
+    {
+      headers: {
+        ...(await authHeader()),
+      },
+    },
+  );
   const res = await prom.json();
   return res;
 };
 
 // opration save jobs false to true
 export const savedJobsOpration = async (data) => {
-  const prom = await fetch(`http://localhost:5000/getsavedjobs`, {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
+  const prom = await fetch(
+    `${process.env.NEXT_PUBLIC_SURVER_URI}/getsavedjobs`,
+    {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        ...(await authHeader()),
+      },
+      body: JSON.stringify(data),
     },
-    body: JSON.stringify(data),
-  });
+  );
   const res = await prom.json();
   if (!res) {
     toast.error("somthings went to wrong!");
@@ -258,11 +365,17 @@ export const savedJobsOpration = async (data) => {
   return res;
 };
 
-// delete saved
+// delete saved jobs
 export const deleteSave = async (id) => {
-  const prom = await fetch(`http://localhost:5000/getsavedjobs/${id}`, {
-    method: "DELETE",
-  });
+  const prom = await fetch(
+    `${process.env.NEXT_PUBLIC_SURVER_URI}/getsavedjobs/${id}`,
+    {
+      method: "DELETE",
+      headers:{
+        ...(await authHeader()),
+      }
+    },
+  );
   const res = await prom.json();
   if (!res) {
     toast.error("somthings went to wrong!");
@@ -274,17 +387,20 @@ export const deleteSave = async (id) => {
 
 // post paymet hsitory
 export const paymentHistory = async (data) => {
-  const prom = await fetch("http://localhost:5000/paymentHistory", {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
+  const prom = await fetch(
+    `${process.env.NEXT_PUBLIC_SURVER_URI}/paymentHistory`,
+    {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        ...(await authHeader()),
+      },
+      body: JSON.stringify(data),
     },
-    body: JSON.stringify(data),
-  });
+  );
 
   if (!prom.ok) {
     const errorText = await prom.text();
-    console.log("API Error:", prom.status, errorText);
     return null;
   }
 
@@ -294,13 +410,18 @@ export const paymentHistory = async (data) => {
 
 // get payment history by
 export const getHistyoyById = async (id) => {
-  const prom = await fetch(`http://localhost:5000/paymentHistory/${id}`);
+  const prom = await fetch(
+    `${process.env.NEXT_PUBLIC_SURVER_URI}/paymentHistory/${id}`,
+    {
+      headers: {
+        ...(await authHeader()),
+      },
+    },
+  );
   if (!prom.ok) {
     const errorText = await prom.text();
-    console.log("API Error:", prom.status, errorText);
     return null;
   }
   const res = await prom.json();
   return res;
 };
-

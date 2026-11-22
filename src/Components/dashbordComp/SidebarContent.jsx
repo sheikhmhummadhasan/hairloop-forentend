@@ -17,7 +17,7 @@ const navigation = [
   { name: "My Company", href: "/dashbord/company", icon: Building2 },
   { name: "Manage Jobs", href: "/dashbord/jobs", icon: BriefcaseBusiness },
   { name: "Applications", href: "/dashbord/applications", icon: Users },
-  { name: "Settings", href: "/dashbord/settings", icon: Settings },
+  { name: "Settings", href: "/dashbord/setting", icon: Settings },
   { name: "Billing", href: "/dashbord/recruterBilling", icon: CreditCard },
 ];
 
@@ -25,7 +25,6 @@ export function SidebarContent({ setMenuOpen }) {
   const pathname = usePathname();
 
   const { data: session, isPending } = useSession();
-  //  console.log(session?.user)
   const userName = session?.user?.name;
   const userImage = session?.user?.image;
 

@@ -11,7 +11,6 @@ const BillingPageRecruterSurver = async () => {
   });
   const userID = session?.user?.id
   const history = await getHistyoyById(userID)
-  console.log(history)
   return (
     <div>
       <Billing history={history}/>

@@ -5,7 +5,6 @@ import { FaMapMarkerAlt, FaBriefcase, FaArrowRight } from "react-icons/fa";
 
 
 const Jobs = async({jobs}) => {
-  console.log(jobs)
 
   return (
     <section className="bg-black px-4 py-16 text-white sm:px-6 sm:py-20 lg:px-8">

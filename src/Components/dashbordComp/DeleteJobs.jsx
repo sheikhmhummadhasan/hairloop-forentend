@@ -6,7 +6,6 @@ import { getRolebyUserIdAndDelete } from "@/lib/mechine";
 
 const DeleteJobs = ({ id }) => {
   const router = useRouter();
-  console.log(id)
 
   const handleDelete = async () => {
     const confirmDelete = window.confirm("Delete all your jobs?");

@@ -33,16 +33,13 @@ export default async function SeekerDashboardPage() {
   const userEmail = session?.user?.email;
   const userID = session?.user?.id;
   const userImage = session?.user?.image;
-  // console.log(userName, userEmail);
 
   const res = await getApplicationData();
   const resById = await getApplicationDataByUserID(userID);
   const resForRejection = await getApplicationRejectionDataByUserID(userID);
   const getOffer = await getOfferd(userID);
   const getPending = await getapplicationPendingData(userID);
-  // console.log(getOffer)
 
-  // console.log(resById);
   return (
     <div className="space-y-8 max-w-7xl mx-auto">
       {/* Top Stats Cards */}

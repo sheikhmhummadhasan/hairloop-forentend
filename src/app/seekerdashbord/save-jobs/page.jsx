@@ -13,7 +13,6 @@ const JaveJob = async () => {
   const userID = session?.user?.id
 
   const SavedJob = await getSavedJobs(userID);
-  console.log(SavedJob)
   
   return (
     <div>

@@ -12,7 +12,6 @@ export async function POST(request) {
     const formData = await request.formData();
     const planId = formData.get("plan_id");
     const priceId = PLAN_PRICE_ID[planId];
-    console.log(priceId)
 
     // Create Checkout Sessions from body params.
     const session = await stripe.checkout.sessions.create({

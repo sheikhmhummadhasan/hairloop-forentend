@@ -37,7 +37,6 @@ const JobPostForm = () => {
       router.push("/dashbord");
     }
 
-    console.log(data);
   };
 
   return (

@@ -57,7 +57,6 @@ const NoCompany = () => {
 
   const router = useRouter();
   const {data:session, error} = useSession()
-  console.log(session?.user?.id)
   const createdUser = session?.user?.id
 
 const handleSubmit = async (e) => {

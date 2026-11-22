@@ -69,7 +69,6 @@ const BrowseDetailPageClient = ({ res, savedJobs }) => {
     usersID,
   };
 
-  // console.log(save)
   const handelSaved = async () => {
     if (userRole === "recruiter") {
       toast.error("This Fecturd only for Jobseeker!");
@@ -79,7 +78,6 @@ const BrowseDetailPageClient = ({ res, savedJobs }) => {
     if (result.modifiedCount > 0) {
       setIsBookmarked(!isBookmarked);
     }
-    console.log(result);
   };
   const handleApply = async (e) => {
     e.preventDefault();

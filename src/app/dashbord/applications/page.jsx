@@ -11,7 +11,6 @@ const ApplicentPage = async () => {
 
   const id = session?.user?.id;
   const role = session?.user?.role
-  console.log(session.user.role)
 
   const applicnt = await getApplicationMyCompany(id);
 

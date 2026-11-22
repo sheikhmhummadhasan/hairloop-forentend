@@ -39,7 +39,6 @@ const SigninForm = () => {
       router.push(redirectTo);
     } catch (error) {
       toast.error(error.message || "Something went wrong!");
-      console.log(error);
     } finally {
       setLoading(false);
     }
@@ -59,7 +58,6 @@ const SigninForm = () => {
       }
     } catch (error) {
       toast.error(error.message || "Something went wrong!");
-      console.log(error);
     } finally {
       setGoogleLoading(false);
     }
